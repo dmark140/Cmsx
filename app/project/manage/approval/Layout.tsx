@@ -29,7 +29,7 @@ export default function Layout() {
 
     const [title, setTitle] = useState('')
     const [desc, setDesc] = useState('')
-    const [approvalType, setApprovalType] = useState<'all' | 'any'>('all')
+    const [approvalType, setApprovalType] = useState<'1' | '2'>('1')
     const [selectedApprover, setSelectedApprover] = useState('')
 
     const fetchSQL = async (queryName: string, params: any[] = []) => {
@@ -91,8 +91,74 @@ export default function Layout() {
         }
     }
 
+    // const handleAddApproval = async () => {
+    //     if (!FormIdRequested) return
+    //     const payload = {
+    //         title,
+    //         description: desc,
+    //         type: approvalType,
+    //         approvers: approvers.map(a => ({
+    //             DocEntry: a.DocEntry,
+    //             FullName: `${a.FirstName} ${a.MiddleName} ${a.LastName}`
+    //         }))
+    //     }
+
+    //     try {
+    //         const res = await fetch('/api/sql', {
+    //             method: 'POST',
+    //             headers: { 'Content-Type': 'application/json' },
+    //             body: JSON.stringify({
+    //                 queryName: 'insert_approval',
+    //                 params: [FormIdRequested, payload.title, payload.description, payload.type, ID]
+    //             })
+    //         })
+
+    //         const data = await res.json()
+    //         if (!res.ok) return toast(data.message)
+
+    //         const insertId = data?.insertId
+    //         if (!insertId) return toast('Failed to insert approval.')
+
+    //         for (const approver of payload.approvers) {
+    //             const res = await fetch('/api/sql', {
+    //                 method: 'POST',
+    //                 headers: { 'Content-Type': 'application/json' },
+    //                 body: JSON.stringify({
+    //                     queryName: 'insert_approval_approvers',
+    //                     params: [insertId, approver.DocEntry]
+    //                 })
+    //             })
+    //             const data = await res.json()
+    //             if (!res.ok) toast(data.message)
+    //         }
+
+    //         toast('Added! Note: you need to activate it ')
+    //         getApprovals()
+    //     } catch (err) {
+    //         toast('Error adding approval.')
+    //     }
+    // }
     const handleAddApproval = async () => {
-        if (!FormIdRequested) return
+        const isInvalid = (value: any) =>
+            value === null || value === '' || value === 0;
+
+        if (
+            isInvalid(FormIdRequested) ||
+            isInvalid(title) ||
+            isInvalid(desc) ||
+            isInvalid(approvalType) ||
+            isInvalid(ID)
+        ) {
+            toast('Please fill in all required fields.');
+            return;
+        }
+
+        if (!approvers || approvers.length === 0) {
+            toast('Please add at least one approver.');
+            return;
+        }
+
+
         const payload = {
             title,
             description: desc,
@@ -101,8 +167,9 @@ export default function Layout() {
                 DocEntry: a.DocEntry,
                 FullName: `${a.FirstName} ${a.MiddleName} ${a.LastName}`
             }))
-        }
-
+        };
+        console.log({ payload })
+        // return
         try {
             const res = await fetch('/api/sql', {
                 method: 'POST',
@@ -111,13 +178,13 @@ export default function Layout() {
                     queryName: 'insert_approval',
                     params: [FormIdRequested, payload.title, payload.description, payload.type, ID]
                 })
-            })
+            });
 
-            const data = await res.json()
-            if (!res.ok) return toast(data.message)
+            const data = await res.json();
+            if (!res.ok) return toast(data.message);
 
-            const insertId = data?.insertId
-            if (!insertId) return toast('Failed to insert approval.')
+            const insertId = data?.insertId;
+            if (!insertId) return toast('Failed to insert approval.');
 
             for (const approver of payload.approvers) {
                 const res = await fetch('/api/sql', {
@@ -127,17 +194,17 @@ export default function Layout() {
                         queryName: 'insert_approval_approvers',
                         params: [insertId, approver.DocEntry]
                     })
-                })
-                const data = await res.json()
-                if (!res.ok) toast(data.message)
+                });
+                const data = await res.json();
+                if (!res.ok) toast(data.message);
             }
 
-            toast('Added! Note: you need to activate it ')
-            getApprovals()
+            toast('Added! Note: you need to activate it');
+            getApprovals();
         } catch (err) {
-            toast('Error adding approval.')
+            toast('Error adding approval.');
         }
-    }
+    };
 
     useEffect(() => {
         loadData()

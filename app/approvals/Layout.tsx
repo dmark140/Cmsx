@@ -245,10 +245,10 @@ export default function Layout() {
                 <TableCell>
                   {item.project_id === 1 ?
                     <FormDialogUser projectId={item.project_id} DocEntry={item.DocNum} /> :
-                    <FormDialog  DocEntry={item.DocNum} />
+                    <FormDialog DocEntry={item.DocNum} onClose={() => { }} />
                   }
 
-                  
+
                 </TableCell>
                 <TableCell>{onlyDate(item.createdDate.toString())}</TableCell>
                 <TableCell
