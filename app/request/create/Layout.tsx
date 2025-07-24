@@ -13,6 +13,7 @@ import SelectField from './Selection';
 import UploadField from './UploadField';
 import TableField from './TableField';
 import { useRouter } from 'next/navigation';
+import { useGlobalPush } from '@/lib/router/useGlobalPush';
 
 export type Project = {
     DocEntry: number;
@@ -33,6 +34,7 @@ export type Project = {
 export default function Layout() {
     const { FormIdRequested, ID } = useGlobalContext();
     const router = useRouter()
+     const { push } = useGlobalPush()
 
     const [data, setData] = useState<Project[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -133,6 +135,7 @@ export default function Layout() {
                 const x = await runQuery('setApproval', [q1?.insertId, FormIdRequested])
                 toast.success("Successfully published , awaiting for approval");
                 console.log({ x })
+
             } catch (error) {
 
             }
@@ -140,7 +143,8 @@ export default function Layout() {
             console.error("Publish error:", error);
             toast.error("Failed to publish data.");
         } finally {
-            setPublishing(false); // ⬅️ End loading
+            setPublishing(false);  
+            push("./")
         }
     };
 

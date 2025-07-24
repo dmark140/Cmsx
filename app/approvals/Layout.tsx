@@ -216,7 +216,7 @@ export default function Layout() {
             <TableHead>Status</TableHead>
             <TableHead>Approver</TableHead>
             <TableHead>Title</TableHead>
-            <TableHead>Decision</TableHead>
+            {/* <TableHead>Decision</TableHead> */}
           </TableRow>
         </TableHeader>
         <TableBody>

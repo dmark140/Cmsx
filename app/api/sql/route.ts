@@ -29,6 +29,10 @@ const queryMap: Record<
     sql: "INSERT INTO `ousr` ( `type`, `email`, `FirstName`, `MiddleName`, `LastName`, `user`, `pass`) VALUES ('3', ?, ?, ?, ?, ?, ?);",
     count: 6,
   },
+  insert_chart_of_accounts: {
+    sql: "INSERT INTO `chart_of_accounts` (`Code`, `Name`,  `createdBy`, `Void`, `type`) VALUES ( ?, ?, ?, ?, ?);",
+    count: 5,
+  },
   CheckUserEmail: {
     sql: "SELECT email FROM `ousr` where email = ?;",
     count: 1,
@@ -418,7 +422,7 @@ export async function POST(request: NextRequest) {
     console.log({ result })
 
     if (
-      ['setApproval', 'insert_projects_data_b_lines', 'insert_projects_data_a_header', 'insertselectionlist', 'insertProjectRequirement', 'insertProject', 'insertUser', 'insert_approval', 'insert_approval_approvers', 'setVoidApproval'].includes(queryName)
+      ['insert_chart_of_accounts', 'setApproval', 'insert_projects_data_b_lines', 'insert_projects_data_a_header', 'insertselectionlist', 'insertProjectRequirement', 'insertProject', 'insertUser', 'insert_approval', 'insert_approval_approvers', 'setVoidApproval'].includes(queryName)
     ) {
       const insertId = (result as any).insertId;
       await connection.end();
