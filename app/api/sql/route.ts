@@ -30,8 +30,25 @@ const queryMap: Record<
     count: 6,
   },
   insert_chart_of_accounts: {
-    sql: "INSERT INTO `chart_of_accounts` (`Code`, `Name`,  `createdBy`, `Void`, `type`) VALUES ( ?, ?, ?, ?, ?);",
-    count: 5,
+    sql: "INSERT INTO `chart_of_accounts` (`Code`, `Name`,  `createdBy`,  `type`) VALUES ( ?, ?, ?, ?);",
+    count: 4,
+  },
+
+  
+  SelectAllChartOfAccount: {
+    sql: "SELECT *,if(Void =1,'Active','Inactive') as status FROM `chart_of_accounts` where void = 1",
+    count: 0,
+  },
+
+  
+  insertchart_of_accountsmap: {
+    sql: "INSERT INTO `chart_of_accountsmap` ( `Type`, `Dr_code`, `Ar_code`, `createdBy`) VALUES ( ?, ?, ?,  ?);",
+    count: 4,
+  },
+
+  ChartOfAccountPerType: {
+    sql: "SELECT Code , Name FROM chart_of_accounts where  type = ?",
+    count: 1,
   },
   CheckUserEmail: {
     sql: "SELECT email FROM `ousr` where email = ?;",

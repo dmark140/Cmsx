@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
 import { toast } from 'sonner'
 import { useGlobalContext } from '@/context/GlobalContext'
-import { runQuery } from '@/lib/utils'
+import { generateFormattedNumber, runQuery } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import { useGlobalPush } from '@/lib/router/useGlobalPush'
 
@@ -176,6 +176,9 @@ export default function Layout() {
                         }
                     }
                 }
+                id
+                const number = generateFormattedNumber(3, id, 7)
+                const addChartOfAccount = await runQuery("insert_chart_of_accounts", [number, formTitle, ID, "Project - Expenses"])
                 push('./manage')
             } else {
                 toast(data.message || "Error")

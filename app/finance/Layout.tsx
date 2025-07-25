@@ -15,6 +15,9 @@ export default function Layout() {
         }, {
             link: "finance/je",
             name: "Journal Entry ",
+        }, {
+            link: "finance/jemapping",
+            name: "Journal Entry ",
         },
     ]
     const reports = [

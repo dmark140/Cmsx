@@ -55,3 +55,7 @@ export const canProceed = (...params: (string | number | null | undefined)[]): b
 export const onlyDate = (isoString: string) => isoString.split('T')[0];
 
 
+export function generateFormattedNumber(header: number, number: number, numberLength: number): string {
+  const numberStr = number.toString().padStart(numberLength, '0');
+  return `${header}${numberStr}`;
+}
