@@ -34,13 +34,13 @@ const queryMap: Record<
     count: 4,
   },
 
-  
+
   SelectAllChartOfAccount: {
     sql: "SELECT *,if(Void =1,'Active','Inactive') as status FROM `chart_of_accounts` where void = 1",
     count: 0,
   },
 
-  
+
   insertchart_of_accountsmap: {
     sql: "INSERT INTO `chart_of_accountsmap` ( `Type`, `Dr_code`, `Ar_code`, `createdBy`) VALUES ( ?, ?, ?,  ?);",
     count: 4,
@@ -50,6 +50,70 @@ const queryMap: Record<
     sql: "SELECT Code , Name FROM chart_of_accounts where  type = ?",
     count: 1,
   },
+
+  insertBookings: {
+    sql: "INSERT INTO bookings (projects_data_a_header_entry, Title, bookingDate, CreatedBy) VALUES (?, ?, ?, ?);",
+    count: 4,
+  },
+  getprojects_data_a_headerWhereNotInBooking: {
+    sql: `SELECT  
+    A.DocEntry
+    ,B.FirstName
+    ,B.MiddleName
+    ,B.LastName
+    ,C.Title,
+    C.Disc
+    FROM projects_data_a_header A 
+    LEFT JOIN ousr B on A.CreatedBy = B.DocEntry
+    LEFT JOIN projects C on C.DocEntry = A.ProjectID
+    where A.DocEntry not in (SELECT projects_data_a_header_entry FROM bookings WHERE void = 1) and     A.ProjectID != 24 `,
+    count: 0,
+  },
+
+
+
+  getprojects_data_a_headerWhereNotInBookingPerDay: {
+    sql: `SELECT  
+distinct
+    E.DocEntry
+    ,B.FirstName
+    ,B.MiddleName
+    ,B.LastName
+    ,C.Title,
+    C.Disc 
+    ,E.bookingDate
+    FROM projects_data_a_header A 
+    LEFT JOIN ousr B on A.CreatedBy = B.DocEntry
+    LEFT JOIN projects C on C.DocEntry = A.ProjectID
+    LEFT JOIN bookings E on E.projects_data_a_header_entry = A.DocEntry
+    where  E.void =1 and E.bookingDate = ? and A.ProjectID != 24;` ,
+    count: 1,
+  },
+
+
+  getprojects_data_a_headerWhereNotInBookings: {
+    sql: `SELECT  
+distinct
+    A.DocEntry
+    ,B.FirstName
+    ,B.MiddleName
+    ,B.LastName
+    ,C.Title,
+    C.Disc 
+    ,E.bookingDate
+    FROM projects_data_a_header A 
+    LEFT JOIN ousr B on A.CreatedBy = B.DocEntry
+    LEFT JOIN projects C on C.DocEntry = A.ProjectID
+    LEFT JOIN bookings E on E.projects_data_a_header_entry = A.DocEntry where e.void = 1   
+    and  A.ProjectID != 24`,
+    count: 0,
+  },
+
+  setbookingsVoid0: {
+    sql: `UPDATE bookings SET void = '0' WHERE bookings.DocEntry = ?`,
+    count: 1,
+  },
+
   CheckUserEmail: {
     sql: "SELECT email FROM `ousr` where email = ?;",
     count: 1,

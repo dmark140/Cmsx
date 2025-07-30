@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Button } from './ui/button'
-import { BriefcaseBusinessIcon, GitPullRequestCreateIcon, HandHeartIcon, HomeIcon, Settings2Icon } from 'lucide-react'
+import { BriefcaseBusinessIcon, Calendar, GitPullRequestCreateIcon, HandHeartIcon, HomeIcon, Settings2Icon } from 'lucide-react'
 import { SidebarMenuButton } from './ui/sidebar'
 import { useRouter } from 'next/navigation'
 import { useGlobalContext } from '@/context/GlobalContext'
@@ -20,6 +20,7 @@ export default function NavMain() {
         { name: "User Defiend Objects", href: "/project", icon: HandHeartIcon },
         { name: "Requsts", href: "/request", icon: GitPullRequestCreateIcon },
         { name: "Approvals", href: "/approvals", icon: GitPullRequestCreateIcon },
+        { name: "Appointment", href: "/booking", icon: Calendar },
         { name: "Settings", href: "/settings", icon: Settings2Icon },
     ]
 

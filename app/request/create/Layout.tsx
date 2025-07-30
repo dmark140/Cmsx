@@ -34,7 +34,7 @@ export type Project = {
 export default function Layout() {
     const { FormIdRequested, ID } = useGlobalContext();
     const router = useRouter()
-     const { push } = useGlobalPush()
+    const { push } = useGlobalPush()
 
     const [data, setData] = useState<Project[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -135,6 +135,9 @@ export default function Layout() {
                 const x = await runQuery('setApproval', [q1?.insertId, FormIdRequested])
                 toast.success("Successfully published , awaiting for approval");
                 console.log({ x })
+                if (FormIdRequested > 25) return
+                const y = await runQuery('setApproval', [q1?.insertId, FormIdRequested])
+                console.log({ x })
 
             } catch (error) {
 
@@ -143,7 +146,7 @@ export default function Layout() {
             console.error("Publish error:", error);
             toast.error("Failed to publish data.");
         } finally {
-            setPublishing(false);  
+            setPublishing(false);
             push("./")
         }
     };

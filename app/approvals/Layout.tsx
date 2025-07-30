@@ -247,8 +247,6 @@ export default function Layout() {
                     <FormDialogUser projectId={item.project_id} DocEntry={item.DocNum} /> :
                     <FormDialog DocEntry={item.DocNum} onClose={() => { }} />
                   }
-
-
                 </TableCell>
                 <TableCell>{onlyDate(item.createdDate.toString())}</TableCell>
                 <TableCell
