@@ -135,12 +135,11 @@ export default function FormDialog({ day, dateStr, isSameMonth, count, onClose }
             }}>
                 <Card
                     key={dateStr}
-                    className={`min-h-[70px] p-2 cursor-pointer hover:bg-muted-foreground ${!isSameMonth ? 'opacity-40' : ''}`}
-                >
+                    className={`min-h-[60px] p-1 cursor-pointer hover:bg-muted-foreground ${!isSameMonth ? 'opacity-40' : ''}`}  >
                     <CardContent className="flex flex-col items-center">
                         <span className="text-sm font-bold">{format(day, "d")}</span>
                         {count > 0 && (
-                            <span className="text-xs mt-1">({count})scheduled</span>
+                            <span className="text-xs mt-1 bg-green-700  rounded-md px-2">({count})scheduled</span>
                         )}
                     </CardContent>
                 </Card>

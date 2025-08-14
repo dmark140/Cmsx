@@ -59,3 +59,21 @@ export function generateFormattedNumber(header: number, number: number, numberLe
   const numberStr = number.toString().padStart(numberLength, '0');
   return `${header}${numberStr}`;
 }
+
+
+export function getDatePart(dateInput: string | Date, option: "month" | "year" | "day" | "dayOfWeek"): string {
+  const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+
+  switch (option) {
+    case "month":
+      return String(date.getMonth() + 1).padStart(2, "0");
+    case "year":
+      return String(date.getFullYear());
+    case "day":
+      return String(date.getDate()).padStart(2, "0");
+    case "dayOfWeek":
+      return date.toLocaleString("en-US", { weekday: "short" }).toUpperCase();
+    default:
+      throw new Error("Invalid option");
+  }
+}

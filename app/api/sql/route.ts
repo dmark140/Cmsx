@@ -272,6 +272,10 @@ where A.DocNum = ? and B.void = 1;`,
   getProjectDataValue: {
     sql: "select  * from vwproject_data_entries where DocEntry = ?",
     count: 1,
+  }, 
+   insertEvaluation: {
+    sql: "INSERT INTO evaluation ( projectId, type_of_house, other_source_of_income, occupation, monthly_income, number_of_meals, source_of_water_per_month, source_of_fuel_per_month, source_of_light_per_month, house_and_lot, appliances, economic_condition, expenditures_vs_income_analysis, evaluation_recommendation, problem_presented, economic_and_family_background, assessment) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );",
+    count: 17,
   },
   getprojects_data_c_table: {
     sql: `SELECT A.DocNum,

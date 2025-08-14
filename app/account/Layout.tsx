@@ -1,19 +1,22 @@
+
+'use client'
 import React from 'react'
 import UserInfo from './UserInfo'
 import AccountInfo from './AccountInfo'
 import { Separator } from '@/components/ui/separator'
+import { useGlobalContext } from '@/context/GlobalContext'
 
 export default function Layout() {
-
-  // get user info
-  // get user GI sheet
-
-
+  const { ID } = useGlobalContext()
   return (
     <div>
-      <div className='my-4'><UserInfo /></div>
-      <Separator/>
-      <div><AccountInfo /></div>
+      <div className='my-4'>
+        <UserInfo userId={ID} hidePassword={false} />
+      </div>
+      <Separator />
+      <div>
+        <AccountInfo userId={ID} />
+      </div>
     </div>
   )
 }

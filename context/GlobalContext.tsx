@@ -11,6 +11,13 @@ type GlobalContextType = {
 
   FormIdRequested: number;
   setFormIdRequested: (type: number) => void;
+
+
+  EvaluationId: number;
+  setEvaluationId: (type: number) => void;
+
+
+
   loading: boolean;
   setloading: (type: boolean) => void;
 };
@@ -24,6 +31,8 @@ const GlobalContext = createContext<GlobalContextType>({
   setID: () => { },
   FormIdRequested: 0,
   setFormIdRequested: () => { },
+  EvaluationId: 0,
+  setEvaluationId: () => { },
   loading: false,
   setloading: () => { },
 });
@@ -34,9 +43,10 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   const [type, settype] = useState("");
   const [ID, setID] = useState(0);
   const [loading, setloading] = useState(false);
+  const [EvaluationId, setEvaluationId] = useState(0);
   const [FormIdRequested, setFormIdRequested] = useState(0);
   return (
-    <GlobalContext.Provider value={{ user, setUser, type, settype, ID, setID, FormIdRequested, setFormIdRequested, loading, setloading, }}>
+    <GlobalContext.Provider value={{ user, setUser, type, settype, ID, setID, FormIdRequested, setFormIdRequested, loading, setloading, EvaluationId, setEvaluationId, }}>
       {children}
     </GlobalContext.Provider>
   );

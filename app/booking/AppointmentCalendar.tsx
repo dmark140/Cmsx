@@ -10,6 +10,7 @@ import { DialogTitle } from "@radix-ui/react-dialog"
 import FormDialog from "./FormDialog"
 import { runQuery } from "@/lib/utils"
 import { toast } from "sonner"
+import { useGlobalPush } from "@/lib/router/useGlobalPush"
 
 interface Schedule {
   id: number
@@ -27,6 +28,7 @@ export default function BookingCalendar() {
   const [newTitle, setNewTitle] = useState("")
   const [open, setOpen] = useState(false)
   const [currentDate, setCurrentDate] = useState(new Date())
+  const { push } = useGlobalPush()
 
 
 
@@ -145,25 +147,33 @@ export default function BookingCalendar() {
       {/* Parameters */}
       <div className="flex justify-between items-center mb-2">
         <Button variant="ghost" onClick={goToPreviousMonth}><ChevronLeft className="w-4 h-4" /></Button>
-        <div className="flex items-center gap-2">
-          <select
-            value={currentMonth}
-            onChange={handleMonthChange}
-            className="border p-1 rounded bg-background"
-          >
-            {months.map((m, idx) => (
-              <option key={m} value={idx}>{m}</option>
-            ))}
-          </select>
-          <select
-            value={currentYear}
-            onChange={handleYearChange}
-            className="border p-1 rounded bg-background"
-          >
-            {years.map((y) => (
-              <option key={y} value={y}>{y}</option>
-            ))}
-          </select>
+        <div className="flex justify-between w-full    " >
+          <Button className="border-0" variant={"ghost"}
+            onClick={() => {
+              push('booking/apnmt')
+
+            }}
+          >Appointment</Button>
+          <div className="flex items-center gap-2">
+            <select
+              value={currentMonth}
+              onChange={handleMonthChange}
+              className="border p-1 rounded bg-background"
+            >
+              {months.map((m, idx) => (
+                <option key={m} value={idx}>{m}</option>
+              ))}
+            </select>
+            <select
+              value={currentYear}
+              onChange={handleYearChange}
+              className="border p-1 rounded bg-background"
+            >
+              {years.map((y) => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
+          </div>
         </div>
         <Button variant="ghost" onClick={goToNextMonth}><ChevronRight className="w-4 h-4" /></Button>
       </div>
@@ -200,9 +210,6 @@ export default function BookingCalendar() {
             </Card>)
         })}
       </div>
-      <Button onClick={() => console.log({ schedules })}>
-        Check
-      </Button>
 
       {/* available project / un */}
       {/* */}
