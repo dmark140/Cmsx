@@ -1,6 +1,6 @@
 'use client';
 import DynamicDropdown from '@/lib/DynamicDropdown';
-import React, { useEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 
 interface GLMapping {
   id: number;
@@ -20,7 +20,7 @@ export default function GLMappingTable() {
     setData(json);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     fetchData();
   }, []);
 

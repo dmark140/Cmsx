@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { runQuery } from '@/lib/utils';
@@ -25,7 +25,7 @@ export default function TableField({ docEntry, fieldKey, value, onChange }: Tabl
   const [columns, setColumns] = useState<Column[]>([]);
   const [dropdownOptions, setDropdownOptions] = useState<Record<string, { code: string; name: string; DocNum: string }[]>>({});
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const fetchColumns = async () => {
       const res = await runQuery('getTableFieldColumns', [docEntry]);
       const cols = res.data || [];

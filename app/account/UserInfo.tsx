@@ -2,7 +2,7 @@
 import { Card } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { runQuery } from '@/lib/utils'
-import React, { useEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 
 type UserInfoProps = {
   userId: number
@@ -20,34 +20,30 @@ export default function UserInfo({ userId, hidePassword = false }: UserInfoProps
       setEmail(ret.data[0].email)
       setFullname(
         ret.data[0].FirstName +
-          " " +
-          ret.data[0].MiddleName +
-          " " +
-          ret.data[0].LastName
+        " " +
+        ret.data[0].MiddleName +
+        " " +
+        ret.data[0].LastName
       )
     } catch (error) {
       console.log(error)
     }
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getUserInfo()
   }, [userId])
 
   return (
-    <div className='grid sm:grid-cols-3 gap-4'>
-      <div>
-        <Label>Full Name</Label>
-        <Card className='p-0 m-0 px-2 py-1'>
-          {fullname || "****"}
-        </Card>
+    <div className='  sm:grid-cols-3 gap-4'>
+      <div className='flex gap-2'>
+        <Label className='font-bold'>Full Name : </Label>
+        {fullname || "****"}
       </div>
 
-      <div>
-        <Label>Email</Label>
-        <Card className='p-0 m-0 px-2 py-1'>
-          {email || "****"}
-        </Card>
+      <div className='flex gap-2'>
+        <Label className='font-bold'>Email : </Label>
+        {email || "****"}
       </div>
 
       {!hidePassword && (

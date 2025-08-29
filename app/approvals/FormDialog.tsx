@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { runQuery } from '@/lib/utils'
 import { ArrowBigRightDash, Disc, LoaderIcon } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { toast } from 'sonner'
 import FormDialogTable from './FormDialogTable'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
@@ -75,7 +75,7 @@ export default function FormDialog({ DocEntry, onClose }: ShowProjectProps) {
     //     setuserData(data)
 
     // }
-    useEffect(() => {
+    useLayoutEffect(() => {
         setLoading(false)
     }, [DocEntry])
 

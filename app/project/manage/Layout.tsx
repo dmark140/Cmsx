@@ -15,7 +15,7 @@ import {
     TableHeader,
     TableRow
 } from '@/components/ui/table'
-import React, { useEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { toast } from 'sonner'
 import Waiting from './Waiting';
 import ShowProject from './ShowProject';
@@ -94,7 +94,7 @@ export default function Layout() {
         }
     }
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         GetProjects();
     }, [])
 

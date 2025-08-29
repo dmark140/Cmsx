@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import React, { useEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { X } from 'lucide-react'
 import { toast } from 'sonner'
 import { useGlobalContext } from '@/context/GlobalContext'
@@ -215,7 +215,7 @@ export default function Layout() {
     const fileFormats = ['.pdf', '.docx', '.xlsx', '.pptx', '.txt']
     const inputFormats = ['Text', 'Date', 'Yes or No', 'Number', 'Month', 'Year', 'Password', 'Email']
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         getAdmins()
         getSelectionListHeader()
     }, [])

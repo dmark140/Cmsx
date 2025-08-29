@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { runQuery } from './utils'
 
 type DropdownItem = {
@@ -22,7 +22,7 @@ export default function DynamicDropdown({
   const [items, setItems] = useState<DropdownItem[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const getData = async () => {
       try {
         const res = await runQuery(queryText, params)

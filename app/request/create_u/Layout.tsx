@@ -1,7 +1,7 @@
 'use client';
 
 import { useGlobalContext } from '@/context/GlobalContext';
-import React, { useEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { runQuery } from '@/lib/utils';
+import { useGlobalPush } from '@/lib/router/useGlobalPush';
 
 export type Project = {
     DocEntry: number;
@@ -27,14 +28,16 @@ export type Project = {
 };
 
 export default function Layout() {
-    const { FormIdRequested } = useGlobalContext();
+    // const { FormIdRequested } = useGlobalContext();
+    const FormIdRequested = 1
     const [data, setData] = useState<Project[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [formValues, setFormValues] = useState<Record<string, string>>({});
     const [showPasswordFields, setShowPasswordFields] = useState<Record<string, boolean>>({});
+    const { push } = useGlobalPush();
 
     const fetchProject = async () => {
-        if (FormIdRequested === 0) return;
+        // if (FormIdRequested === 0) return;
         setLoading(true);
         try {
             const res = await fetch('/api/sql', {
@@ -54,7 +57,6 @@ export default function Layout() {
             setLoading(false);
         }
     };
-
     const insertUser = async () => {
         if (FormIdRequested !== 1) return;
         const email = formValues['Email'] || '';
@@ -107,7 +109,8 @@ export default function Layout() {
             const resId = result?.insertId || 0
             if (res.ok && resId != 0) {
                 const x = await runQuery('setApproval', [resId, FormIdRequested])
-                toast.success('User created successfully');
+                toast.success("User created successfully, and it's now for approval");
+                push('/')
             } else {
                 toast.error('Failed to insert user');
             }
@@ -118,7 +121,7 @@ export default function Layout() {
         }
     };
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         fetchProject();
     }, [FormIdRequested]);
 
@@ -136,6 +139,7 @@ export default function Layout() {
     const handlePublish = () => {
         console.log('Form Submitted:', formValues);
         insertUser();
+
     };
 
     const uniqueFields = data.map((item) => ({

@@ -3,13 +3,13 @@
 
 import { useLoadingStore } from '@/lib/router/useLoadingStore'
 import { usePathname } from 'next/navigation'
-import { useEffect } from 'react'
+import { useLayoutEffect } from 'react'
 
 export function RouteLoadingReset() {
   const pathname = usePathname()
   const setLoading = useLoadingStore((s) => s.setLoading)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // whenever the route changes, stop loading
     setLoading(false)
   }, [pathname])

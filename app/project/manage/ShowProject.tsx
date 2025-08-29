@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -53,7 +53,7 @@ export default function ShowProject({ projectId, DocEntry, onClose }: ShowProjec
     }
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     fetchProject()
   }, [projectId])
 

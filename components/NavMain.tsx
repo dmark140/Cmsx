@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Button } from './ui/button'
-import { BriefcaseBusinessIcon, Calendar, GitPullRequestCreateIcon, HandHeartIcon, HomeIcon, Settings2Icon } from 'lucide-react'
+import { BriefcaseBusinessIcon, Calendar, GitPullRequestCreateIcon, HandHeartIcon, HomeIcon, NotebookPen, Settings2Icon } from 'lucide-react'
 import { SidebarMenuButton } from './ui/sidebar'
 import { useRouter } from 'next/navigation'
 import { useGlobalContext } from '@/context/GlobalContext'
@@ -16,11 +16,14 @@ export default function NavMain() {
     const { setloading } = useGlobalContext();
     const navItems = [
         { name: "Dashboard", href: "/", icon: HomeIcon },
-        { name: "Finance", href: "/finance", icon: BriefcaseBusinessIcon },
+        // { name: "Finance", href: "/finance", icon: BriefcaseBusinessIcon },
         { name: "User Defiend Objects", href: "/project", icon: HandHeartIcon },
         { name: "Requsts", href: "/request", icon: GitPullRequestCreateIcon },
+        { name: "Assessment", href: "/ana", icon: GitPullRequestCreateIcon },
         { name: "Approvals", href: "/approvals", icon: GitPullRequestCreateIcon },
-        { name: "Appointment", href: "/booking", icon: Calendar },
+        { name: "qmnger", href: "/qmnger", icon: GitPullRequestCreateIcon },
+        // { name: "Appointment", href: "/booking", icon: Calendar },
+        // { name: "Evaluation", href: "/booking/apnmt", icon:NotebookPen  },
         { name: "Settings", href: "/settings", icon: Settings2Icon },
     ]
 

@@ -9,6 +9,7 @@ export function useGlobalPush() {
   const push = async (path: string) => {
     setLoading(true)
     router.push(path)
+    
   }
 
   return { push }

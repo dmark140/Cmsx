@@ -1,7 +1,7 @@
 'use client';
 
 import { useGlobalContext } from '@/context/GlobalContext';
-import React, { useEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -64,7 +64,7 @@ export default function Layout() {
         }
     };
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         fetchProject();
     }, [FormIdRequested]);
 

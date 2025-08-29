@@ -3,7 +3,7 @@
 import { formatDistanceToNow } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
-import React, { useEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { toast } from 'sonner';
 import { useGlobalContext } from '@/context/GlobalContext'
 import { useRouter } from 'next/navigation'
@@ -50,13 +50,11 @@ export default function Layout() {
     }
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    setFormIdRequested(0);
     GetProjects();
   }, [])
 
-  useEffect(() => {
-    setFormIdRequested(0);
-  }, [])
   return (
     <>
       <Table>

@@ -1,7 +1,7 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import { runQuery } from '@/lib/utils'
-import React, { useEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { DataTable } from './data-table'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 type formParam = {
@@ -26,6 +26,7 @@ type rows = {
 export default function FormDialogTable({ DocEntry, dataNumber, projectDataId }: formParam) {
     const [cols, setcols] = useState<cols[]>([])
     const [rows, setrows] = useState<rows[]>([])
+    const [loading, setloading] = useState(false)
 
     const getTableHeader = async () => {
         try {
@@ -37,6 +38,7 @@ export default function FormDialogTable({ DocEntry, dataNumber, projectDataId }:
         }
     }
     const getTableRows = async () => {
+        setloading(true)
         try {
             const rows = await runQuery("getprojects_data_c_table", [DocEntry, projectDataId])
             console.log({ rows })
@@ -44,18 +46,20 @@ export default function FormDialogTable({ DocEntry, dataNumber, projectDataId }:
         } catch (error) {
             console.log(error)
         }
+        setloading(false)
+
     }
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         getTableHeader()
         getTableRows()
-    }, [])
+    }, [projectDataId])
 
     return (
         <div className='overflow-auto'>
             {/* <DataTable columns={cols} data={cols} /> */}
             <Table>
-                <TableCaption>End of List</TableCaption>
+                {/* <TableCaption>End of List</TableCaption> */}
                 <TableHeader>
                     <TableRow>
                         {cols.map((item, i) => (
@@ -82,6 +86,8 @@ export default function FormDialogTable({ DocEntry, dataNumber, projectDataId }:
                 </TableBody>
 
             </Table>
+            {loading ? <p className='text-center text-muted-foreground'>Loading...</p> : ""}
+
             {/* <Button onClick={() => { console.log({ DocEntry, projectDataId }); getTableRows() }}> test</Button> */}
         </div>
     )

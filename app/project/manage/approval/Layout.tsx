@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
@@ -206,7 +206,7 @@ export default function Layout() {
         }
     };
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         loadData()
         getApprovals()
     }, [])

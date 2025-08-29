@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import DynamicTable from '@/lib/DynamicTable'
@@ -50,7 +50,7 @@ export default function Layout() {
     setPage(newPage)
   }
 
-  useEffect(() => void fetchData(), [])
+  useLayoutEffect(() => void fetchData(), [])
 
   return (
     <div className="p-4 space-y-4">

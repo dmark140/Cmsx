@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { runQuery } from '@/lib/utils'
-import React, { useEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import FormDialogTable from '../approvals/FormDialogTable'
 import { Separator } from '@/components/ui/separator'
 
@@ -78,26 +78,26 @@ export default function AccountInfo({ userId }: AccountInfoProps) {
     }
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getDocEntry()
-  }, [userId])
-
-  useEffect(() => {
-    fetchProject()
   }, [DocEntry])
 
+  useLayoutEffect(() => {
+    fetchProject()
+  }, [userId])
+
   return (
-    <div className='mt-4'>
-      <div className='grid sm:grid-cols-3 gap-4'>
+    <div className=' '>
+      <div className=''>
         {data.map((row, idx) => (
-          <div className='m-0 p-0 mb-4 overflow-auto max-w-[1200px]' key={idx}>
-            <div>
-              <Label>
+          <div className='m-0 p-0  overflow-auto max-w-[1200px]' key={idx}>
+            <div className='flex '>
+              <Label className='font-bold'>
                 {row.iValue == "table" ? "" : row.title}
               </Label>
-              <Card className={`p-0 m-0 px-2 py-1 ${row.iValue == "table" ? "invisible" : ""}`}>
-                {row.iValue == "table" ? "" : row.iValue}
-              </Card>
+              <div className={`p-0 m-0 px-2   ${row.iValue == "table" ? "invisible" : ""}`}>
+                : {row.iValue == "table" ? "" : row.iValue}
+              </div>
             </div>
           </div>
         ))}
@@ -119,7 +119,7 @@ export default function AccountInfo({ userId }: AccountInfoProps) {
         )
       ))}
 
-      <Button onClick={fetchProject}>Test</Button>
+      {/* <Button onClick={fetchProject}>Test</Button> */}
     </div>
   )
 }

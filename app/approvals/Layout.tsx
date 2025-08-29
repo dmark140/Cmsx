@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { toast } from 'sonner'
 import {
   Table,
@@ -161,11 +161,11 @@ export default function Layout() {
     await getData()
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setDatas()
   }, [])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setData([])
     setMaxPage(1)
     setPage(1)

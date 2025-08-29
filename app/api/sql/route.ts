@@ -82,11 +82,13 @@ distinct
     ,C.Title,
     C.Disc 
     ,E.bookingDate
+    ,if(v.DocEntry is not null ,'Evaluated','Pending' ) istatus
     FROM projects_data_a_header A 
     LEFT JOIN ousr B on A.CreatedBy = B.DocEntry
     LEFT JOIN projects C on C.DocEntry = A.ProjectID
     LEFT JOIN bookings E on E.projects_data_a_header_entry = A.DocEntry
-    where  E.void =1 and E.bookingDate = ? and A.ProjectID != 24;` ,
+    LEFT JOIN evaluation v on v.bookingid = E.DocEntry
+    where  E.void =1 and E.bookingDate = ? and A.ProjectID != 24` ,
     count: 1,
   },
 
@@ -114,6 +116,52 @@ distinct
     count: 1,
   },
 
+
+  getBookingForEvaluation: {
+    sql: `SELECT  
+    B.CreatedBy, 
+        A.DocEntry
+    ,C.FirstName
+    ,C.MiddleName
+    ,C.LastName
+    FROM bookings A
+    LEFT JOIN projects_data_a_header B on A.projects_data_a_header_entry = B.DocEntry
+    LEFT JOIN ousr C on C.DocEntry = B.CreatedBy
+    where A.DocEntry = ?`,
+    count: 1,
+  },
+
+  getEvls: {
+    sql: `SELECT 
+    A.DocEntry,
+  E.DocEntry UID
+  ,E.firstname
+  ,E.LastName
+  ,E.MiddleName
+
+  ,B.BookingDate
+  ,C.createdDate requestedDate
+  ,F.Title
+  ,F.Disc
+  ,A.createdDate
+  FROM evaluation A
+  LEFT JOIN bookings B on A.bookingid = B.DocEntry
+  LEFT JOIN projects_data_a_header C on C.DocEntry = B.projects_data_a_header_entry
+  LEFT JOIN ousr E on E.DocEntry = C.CreatedBy
+  LEFT JOIN projects F on F.DocEntry = C.ProjectID
+  where E.DocEntry is not null
+  and A.CreatedDate BETWEEN ? and ?`,
+    count: 2,
+  },
+
+
+
+  getEval: {
+    sql: `SELECT 
+   *    FROM evaluation A   where A.DocEntry = ?`,
+    count: 1,
+  },
+
   CheckUserEmail: {
     sql: "SELECT email FROM `ousr` where email = ?;",
     count: 1,
@@ -127,7 +175,19 @@ distinct
     count: 1,
   },
   getUserWithPassword: {
-    sql: "SELECT * FROM OUSR WHERE user = ? or email = ? AND pass = ? LIMIT 1",
+    sql: `
+     SELECT A.*
+FROM OUSR A
+LEFT JOIN vwdmf_approval_status B 
+    ON A.DocEntry = B.DocEntry 
+   AND B.project_id = 1 
+   AND B.FinalApprovalStatus = 'Approved'
+WHERE A.void = 1
+  AND (A.user = ? OR A.email = ?)
+  AND A.pass = ?
+  AND B.DocEntry IS NOT NULL
+LIMIT 1;
+`,
     count: 3,
   },
   listAllUsers: {
@@ -272,9 +332,9 @@ where A.DocNum = ? and B.void = 1;`,
   getProjectDataValue: {
     sql: "select  * from vwproject_data_entries where DocEntry = ?",
     count: 1,
-  }, 
-   insertEvaluation: {
-    sql: "INSERT INTO evaluation ( projectId, type_of_house, other_source_of_income, occupation, monthly_income, number_of_meals, source_of_water_per_month, source_of_fuel_per_month, source_of_light_per_month, house_and_lot, appliances, economic_condition, expenditures_vs_income_analysis, evaluation_recommendation, problem_presented, economic_and_family_background, assessment) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );",
+  },
+  insertEvaluation: {
+    sql: "INSERT INTO evaluation ( bookingid, type_of_house, other_source_of_income, occupation, monthly_income, number_of_meals, source_of_water_per_month, source_of_fuel_per_month, source_of_light_per_month, house_and_lot, appliances, economic_condition, expenditures_vs_income_analysis, evaluation_recommendation, problem_presented, economic_and_family_background, assessment) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );",
     count: 17,
   },
   getprojects_data_c_table: {

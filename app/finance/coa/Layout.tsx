@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import React, { useEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from '@/components/ui/input';
 import { Checkbox } from "@/components/ui/checkbox";
@@ -66,7 +66,7 @@ export default function Layout() {
     console.log(x)
     setChartOfAccounts(x.data)
   }
-  useEffect(() => {
+  useLayoutEffect(() => {
     getData()
   }, [])
 

@@ -4,7 +4,7 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { useGlobalContext } from '@/context/GlobalContext'
 import { useGlobalPush } from '@/lib/router/useGlobalPush'
 import { getDatePart, runQuery } from '@/lib/utils'
-import React, { useEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 interface Schedule {
@@ -27,10 +27,9 @@ export default function Layout() {
     }
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getBookingPerDay()
-  }, [])
-
+  }, []) 
   return (
     <div>
       <Table>
@@ -59,7 +58,8 @@ export default function Layout() {
                 setEvaluationId(item.id)
                 push("apnmt/eval")
               }
-              }>Evaluate</Button></TableCell>
+              }>Evaluate</Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

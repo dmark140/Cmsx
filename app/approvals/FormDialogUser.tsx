@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { runQuery } from '@/lib/utils'
 import { ArrowBigRightDash, LoaderIcon } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { toast } from 'sonner'
 type ShowProjectProps = {
     projectId: number
@@ -74,7 +74,7 @@ export default function FormDialogUser({ projectId, DocEntry, onClose }: ShowPro
         setuserData(data)
 
     }
-    useEffect(() => {
+    useLayoutEffect(() => {
         setLoading(false)
     }, [projectId])
 

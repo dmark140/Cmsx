@@ -1,6 +1,7 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
+import { useGlobalContext } from '@/context/GlobalContext';
 import { runQuery } from '@/lib/utils';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
@@ -16,7 +17,7 @@ type OptionGroup = {
 };
 
 export default function Evaluation() {
-
+    const { ID } = useGlobalContext();
     const objList: OptionGroup[] = [
         { code: "type_of_house", name: "Type of House", list: [{ code: "Concrete" }, { code: "Wood" }, { code: "Concrete w/ wood" }, { code: "Others" }] },
         { code: "other_source_of_income", name: "Other Source of Income", list: [{ code: "Friends" }, { code: "Relatives" }, { code: "Children" }, { code: "Others" }] },
@@ -91,7 +92,7 @@ export default function Evaluation() {
 
     const postValue = async () => {
         const result: Record<string, string> = {};
-        result.projectId = "123"; // Example only
+        result.projectId = ID.toString(); // Example only
 
         const allGroups = [...objList, ...extraSections];
         for (const group of allGroups) {
@@ -141,7 +142,7 @@ export default function Evaluation() {
 
     const renderGroup = (group: OptionGroup) => (
         <div key={group.name} className="mb-6">
-            <h3 className="font-semibold bg-muted-foreground w-fit px-2 p-0 rounded-md">{group.name}</h3>
+            <h3 className="font-semibold  w-fit px-2 p-0 rounded-md">{group.name}</h3>
             <ul className="list-none p-0">
                 {group.list.map((item, i) => (
                     <li key={i} className="mb-1">

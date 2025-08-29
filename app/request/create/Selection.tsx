@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { runQuery } from '@/lib/utils';
-import React, { useEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 
 type SelectionLists = {
   DocNum: number;
@@ -22,7 +22,7 @@ interface SelectFieldProps {
 export default function SelectField({ docEntry, fieldKey, value, onChange }: SelectFieldProps) {
   const [options, setOptions] = useState<SelectionLists[]>([]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const getOptions = async () => {
       try {
         const res = await runQuery('getselectionlistPerRowDocnum', [docEntry]);

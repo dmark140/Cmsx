@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { runQuery } from '@/lib/utils'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { format } from "date-fns"
 import { useGlobalContext } from '@/context/GlobalContext'
@@ -43,6 +43,7 @@ type BookingInfo = {
     Title: string;
     Disc: string;
     bookingDate: string;
+    istatus: string;
 }
 
 export default function FormDialog({ day, dateStr, isSameMonth, count, onClose }: ShowProjectProps) {
@@ -121,7 +122,7 @@ export default function FormDialog({ day, dateStr, isSameMonth, count, onClose }
         setSelectedDayBookings([])
     }
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         onClose()
     }, [open])
 
@@ -135,7 +136,7 @@ export default function FormDialog({ day, dateStr, isSameMonth, count, onClose }
             }}>
                 <Card
                     key={dateStr}
-                    className={`min-h-[60px] p-1 cursor-pointer hover:bg-muted-foreground ${!isSameMonth ? 'opacity-40' : ''}`}  >
+                    className={`min-h-[60px] p-1 cursor-pointer hover:bg-muted-foreground rounded-none ${!isSameMonth ? 'opacity-40' : ''}`}  >
                     <CardContent className="flex flex-col items-center">
                         <span className="text-sm font-bold">{format(day, "d")}</span>
                         {count > 0 && (
@@ -205,17 +206,23 @@ export default function FormDialog({ day, dateStr, isSameMonth, count, onClose }
                                             return (
                                                 <div
                                                     key={i}
-                                                    onClick={() => toggleDayBookingSelection(item.DocEntry)}
+                                                    onClick={() => {
+                                                        if (item.istatus === "Evaluated") return
+                                                        toggleDayBookingSelection(item.DocEntry)
+
+                                                    }
+                                                    }
                                                     className={`cursor-pointer ${isSelected ? 'bg-red-100 border border-red-400' : ''} border px-2 rounded-md`}
                                                 >
                                                     <Card className="max-w-[290px] w-full px-2 m-0 gap-0 py-1">
                                                         <div className="flex gap-2">
                                                             <div className="w-10 h-10 rounded-full bg-foreground text-background flex items-center justify-center">
-                                                                {item.FirstName[0]}{item.LastName[0]}
+                                                                {item.FirstName[0]}{item.LastName[0]}{item.DocEntry}
                                                             </div>
                                                             <div className="overflow-auto max-w-[200px] w-full whitespace-nowrap">
                                                                 <p>{item.FirstName} {item.LastName}</p>
-                                                                <p className="text-muted">{item.Title}</p>
+                                                                <p className="text-muted px-1">{item.Title}</p>
+                                                                <p className={`text-foreground px-1  w-fit rounded-md ${item.istatus === "Evaluated" ? "bg-green-600" : "bg-orange-600"} `}>{item.istatus}</p>
                                                             </div>
                                                         </div>
                                                     </Card>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useLayoutEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
@@ -106,7 +106,7 @@ export default function BookingCalendar() {
   ]
 
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getBookingPerDay()
   }, [currentMonth])
 
@@ -193,7 +193,7 @@ export default function BookingCalendar() {
           return (
 
             <Card key={i} className="p-0 m-0 bg-transparent">
-              <FormDialog count={count} dateStr={dateStr} day={day} isSameMonth={isSameMonth} onClose={getBookingPerDay} />
+              <FormDialog count={count} dateStr={dateStr} day={day} isSameMonth={isSameMonth} onClose={()=>{}} />
               {/* <Card
                 key={dateStr}
                 className={`min-h-[70px] p-2 cursor-pointer hover:bg-muted-foreground ${!isSameMonth ? 'opacity-40' : ''}`}
