@@ -135,9 +135,13 @@ export default function Layout() {
     }
   };
 
-  const setApprovalState = async (state: Number, iDocEntry: number,) => {
+  const setApprovalState = async (state: Number, iDocEntry: number, project_id?: number, DocNum?: number) => {
     try {
+
+      console.log({ state, iDocEntry, project_id, DocNum })
       await runQuery("setApprovalState", [state, iDocEntry])
+      if (project_id == 1) await runQuery("setOusrVoid1", [DocNum])
+
     } catch (erro) {
       console.error(erro)
     }
@@ -227,6 +231,8 @@ export default function Layout() {
             return (
               <TableRow key={index} className={isEditable ? "" : "bg-muted"}>
                 <TableCell>
+                  {isEditable} ☺
+                  {ID}
                   <Checkbox
                     disabled={!isEditable}
                     checked={isChecked}
@@ -267,7 +273,9 @@ export default function Layout() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
                         <DropdownMenuItem onClick={async () => {
-                          await setApprovalState(1, item.ApprovalNum)
+                          console.log({ item })
+
+                          await setApprovalState(1, item.ApprovalNum, item.project_id, item.DocNum)
                           await getData()
                         }}>Approve</DropdownMenuItem>
                         <DropdownMenuItem onClick={async () => {

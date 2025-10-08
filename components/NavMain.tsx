@@ -1,52 +1,75 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from './ui/button'
-import { BriefcaseBusinessIcon, Calendar, GitPullRequestCreateIcon, HandHeartIcon, HomeIcon, NotebookPen, Settings2Icon } from 'lucide-react'
 import { SidebarMenuButton } from './ui/sidebar'
-import { useRouter } from 'next/navigation'
 import { useGlobalContext } from '@/context/GlobalContext'
 import { useGlobalPush } from '@/lib/router/useGlobalPush'
+import { navItems } from '@/lib/NavigationList'
+import { runQuery } from '@/lib/utils'
 
+// 👇 Extend type for local state
+type NavItemType = (typeof navItems)[number] & {
+  hidden?: boolean
+  href?: string
+}
 
 export default function NavMain() {
-    // const router = useRouter()
-    const { push } = useGlobalPush()
+  const { push } = useGlobalPush()
+  const { setloading, UserLevel } = useGlobalContext()
+  const [allowedNavs, setAllowedNavs] = useState<NavItemType[]>([])
 
-    const { setloading } = useGlobalContext();
-    const navItems = [
-        { name: "Dashboard", href: "/", icon: HomeIcon },
-        // { name: "Finance", href: "/finance", icon: BriefcaseBusinessIcon },
-        { name: "User Defiend Objects", href: "/project", icon: HandHeartIcon },
-        { name: "Requsts", href: "/request", icon: GitPullRequestCreateIcon },
-        { name: "Assessment", href: "/ana", icon: GitPullRequestCreateIcon },
-        { name: "Approvals", href: "/approvals", icon: GitPullRequestCreateIcon },
-        { name: "qmnger", href: "/qmnger", icon: GitPullRequestCreateIcon },
-        // { name: "Appointment", href: "/booking", icon: Calendar },
-        // { name: "Evaluation", href: "/booking/apnmt", icon:NotebookPen  },
-        { name: "Settings", href: "/settings", icon: Settings2Icon },
-    ]
+  const getDashBoard = async () => {
+    const res = await runQuery('getDashBoard', [])
+    if (res.success) {
+      const data = res.data
+      const accessField = UserLevel === 1 ? 'admin' : UserLevel === 2 ? 'staff' : 'user'
 
+      const filtered: NavItemType[] = navItems.map((item) => {
+        const perm = data.find((d: any) => d.nav_id === item.id)
+        let allowed = true
 
-    return (
-        <div className=''>
-            {navItems.map((item, i) => (
-                <SidebarMenuButton asChild key={i}>
-                    <Button
-                        variant='ghost'
-                        onClick={() => {
-                            setloading(true)
-                            // router.push(item.href)
-                            push(item.href)
+        if (UserLevel !== 1) {
+          allowed = perm ? perm[accessField] === 1 : false
+        }
 
-                        }
-                        }
-                        className="justify-start text-left w-full px-4 flex gap-2 items-center" >
-                        <item.icon className="w-4 h-4" />
-                        <span>{item.name}</span>
-                    </Button>
-                </SidebarMenuButton>
-            ))}
-        </div>
-    )
+        return {
+          ...item,
+          href: allowed ? item.href : '#',
+          hidden: !allowed,
+        }
+      })
+
+      setAllowedNavs(filtered)
+    }
+  }
+
+  useEffect(() => {
+    getDashBoard()
+  }, [UserLevel])
+
+  return (
+    <div>
+      {allowedNavs
+        .filter((item) => !item.hidden)
+        .map((item, i) => (
+          <SidebarMenuButton asChild key={i}>
+            <a
+              href={item.href}
+              onClick={() => item.href !== '#' && setloading(true)}
+              className={`justify-start text-left w-full px-4 flex gap-2 items-center rounded-md transition-colors ${
+                item.href === '#'
+                  ? 'opacity-50 pointer-events-none'
+                  : 'hover:bg-accent hover:text-accent-foreground'
+              }`}
+            >
+              <item.icon className="w-4 h-4" />
+              <span>{item.name}</span>
+            </a>
+          </SidebarMenuButton>
+        ))}
+
+      <Button onClick={getDashBoard}>Refresh Dashboard</Button>
+    </div>
+  )
 }

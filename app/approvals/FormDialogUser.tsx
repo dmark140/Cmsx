@@ -71,7 +71,7 @@ export default function FormDialogUser({ projectId, DocEntry, onClose }: ShowPro
         if (projectId != 1) return
         const data = await runQuery('getUserForApproval', [DocEntry])
         console.log(data)
-        setuserData(data)
+        setuserData(data.data)
 
     }
     useLayoutEffect(() => {
@@ -121,7 +121,7 @@ export default function FormDialogUser({ projectId, DocEntry, onClose }: ShowPro
                                             </button>
                                         )}
                                     </div>
-                                    {data.map((row, idx) => (
+                                    {/* {data.map((row, idx) => (
                                         <div className="mb-4" key={idx}>
                                             <Label className="block mb-1 font-semibold">{row.title}</Label>
                                             {
@@ -141,7 +141,38 @@ export default function FormDialogUser({ projectId, DocEntry, onClose }: ShowPro
                                                     />
                                                 )}
                                         </div>
-                                    ))}
+                                    ))} */}
+                                    {data.map((row, idx) => {
+                                        const user = userData?.[0] ?? {};
+                                        const fieldMap: Record<string, keyof typeof user> = {
+                                            "First Name": "FirstName",
+                                            "Middle Name": "MiddleName",
+                                            "Last Name": "LastName",
+                                            "Username": "user",
+                                            "Email": "email",
+                                            "Password": "pass",
+                                        };
+
+                                        // Determine default value safely
+                                        const defaultValue =
+                                            projectId === 1 && fieldMap[row.title]
+                                                ? user[fieldMap[row.title]] ?? ""
+                                                : "";
+
+                                        return (
+                                            <div className="mb-4" key={idx}>
+                                                <Label className="block mb-1 font-semibold">{row.title}</Label>
+                                                {row.type !== "file" && (
+                                                    <Input
+                                                        type={row.type}
+                                                        placeholder={row.value || ""}
+                                                        defaultValue={defaultValue}
+                                                    />
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+
                                 </Card>
                             </div>
                             }

@@ -5,13 +5,14 @@ import { useGlobalContext } from '@/context/GlobalContext';
 import LoginPage from './login/LoginForm';
 
 export default function AppLayout() {
-    const { ID } = useGlobalContext();
+    const { ID, setID } = useGlobalContext();
 
     return (
         <div>
+            {/* <button onClick={() => setID(0)}>restart</button> */}
             {ID ?
                 <LayoutDashb /> :
-                <LoginPage   />
+                <LoginPage />
             }
         </div>
     )

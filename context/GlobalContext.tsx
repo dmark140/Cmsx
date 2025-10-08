@@ -1,56 +1,125 @@
 "use client";
-import React, { createContext, useContext, useState, ReactNode } from "react";
-// Define the shape of your global state
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+
 type GlobalContextType = {
   user: string;
   setUser: (user: string) => void;
   type: string;
   settype: (type: string) => void;
   ID: number;
-  setID: (type: number) => void;
-
+  setID: (id: number) => void;
+  UserLevel: number;
+  setUserLevel: (level: number) => void;
   FormIdRequested: number;
-  setFormIdRequested: (type: number) => void;
-
-
+  setFormIdRequested: (id: number) => void;
   EvaluationId: number;
-  setEvaluationId: (type: number) => void;
-
-
-
+  setEvaluationId: (id: number) => void;
   loading: boolean;
-  setloading: (type: boolean) => void;
+  setloading: (state: boolean) => void;
 };
-// Provide default values (can be empty strings or undefined if optional)
+
 const GlobalContext = createContext<GlobalContextType>({
   user: "",
-  setUser: () => { },
+  setUser: () => {},
   type: "",
-  settype: () => { },
+  settype: () => {},
   ID: 0,
-  setID: () => { },
+  setID: () => {},
+  UserLevel: 0,
+  setUserLevel: () => {},
   FormIdRequested: 0,
-  setFormIdRequested: () => { },
+  setFormIdRequested: () => {},
   EvaluationId: 0,
-  setEvaluationId: () => { },
+  setEvaluationId: () => {},
   loading: false,
-  setloading: () => { },
+  setloading: () => {},
 });
 
-// Wrap your app in this provider
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
+  // Default states
   const [user, setUser] = useState("");
   const [type, settype] = useState("");
   const [ID, setID] = useState(0);
-  const [loading, setloading] = useState(false);
-  const [EvaluationId, setEvaluationId] = useState(0);
+  const [UserLevel, setUserLevel] = useState(0);
   const [FormIdRequested, setFormIdRequested] = useState(0);
+  const [EvaluationId, setEvaluationId] = useState(0);
+  const [loading, setloading] = useState(false);
+
+  // Load saved values only on client
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedUser = localStorage.getItem("user");
+      const savedType = localStorage.getItem("type");
+      const savedID = localStorage.getItem("ID");
+      const savedUserLevel = localStorage.getItem("UserLevel");
+      const savedFormIdRequested = localStorage.getItem("FormIdRequested");
+      const savedEvaluationId = localStorage.getItem("EvaluationId");
+
+      if (savedUser) setUser(savedUser);
+      if (savedType) settype(savedType);
+      if (savedID) setID(Number(savedID));
+      if (savedUserLevel) setUserLevel(Number(savedUserLevel));
+      if (savedFormIdRequested) setFormIdRequested(Number(savedFormIdRequested));
+      if (savedEvaluationId) setEvaluationId(Number(savedEvaluationId));
+    }
+  }, []);
+
+  // Save to localStorage whenever values change
+  useEffect(() => {
+    if (typeof window !== "undefined") localStorage.setItem("user", user);
+  }, [user]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") localStorage.setItem("type", type);
+  }, [type]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") localStorage.setItem("ID", String(ID));
+  }, [ID]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined")
+      localStorage.setItem("UserLevel", String(UserLevel));
+  }, [UserLevel]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined")
+      localStorage.setItem("FormIdRequested", String(FormIdRequested));
+  }, [FormIdRequested]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined")
+      localStorage.setItem("EvaluationId", String(EvaluationId));
+  }, [EvaluationId]);
+
   return (
-    <GlobalContext.Provider value={{ user, setUser, type, settype, ID, setID, FormIdRequested, setFormIdRequested, loading, setloading, EvaluationId, setEvaluationId, }}>
+    <GlobalContext.Provider
+      value={{
+        user,
+        setUser,
+        type,
+        settype,
+        ID,
+        setID,
+        UserLevel,
+        setUserLevel,
+        FormIdRequested,
+        setFormIdRequested,
+        EvaluationId,
+        setEvaluationId,
+        loading,
+        setloading,
+      }}
+    >
       {children}
     </GlobalContext.Provider>
   );
 };
 
-// Helper hook to use the context
 export const useGlobalContext = () => useContext(GlobalContext);

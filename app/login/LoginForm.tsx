@@ -23,7 +23,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [starded, setstarded] = useState(false)
 
-  const { setUser, settype, setID } = useGlobalContext()
+  const { setUser, settype, setID, setUserLevel } = useGlobalContext()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,6 +31,7 @@ export default function LoginPage() {
 
     try {
       const userx = email
+      console.log({ userx, email, password })
       const res = await fetch("/api/sql", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -47,8 +48,11 @@ export default function LoginPage() {
       if (res.ok) {
         if (userInfo.DocEntry) {
           toast("Login successful!")
+          console.log({ userInfo })
+
           setUser(userInfo.user)
           settype(userInfo.type)
+          setUserLevel(userInfo.type)
           setID(userInfo.DocEntry)
         } else {
           toast.warning("Wrong email or password.")

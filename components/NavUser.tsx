@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useRouter } from "next/navigation"
 import { useGlobalPush } from "@/lib/router/useGlobalPush"
+import { useGlobalContext } from "@/context/GlobalContext"
 
 export function NavUser({
     user,
@@ -43,7 +44,7 @@ export function NavUser({
 
     const { push } = useGlobalPush()
 
-
+    const { setID } = useGlobalContext()
     const { isMobile } = useSidebar()
 
     return (
@@ -60,7 +61,7 @@ export function NavUser({
                                 <AvatarFallback className="rounded-lg">D</AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-medium">{user.name}</span>
+                                {/* <span className="truncate font-medium">{user.name}</span> */}
                                 <span className="text-muted-foreground truncate text-xs">
                                     {user.email}
                                 </span>
@@ -76,8 +77,7 @@ export function NavUser({
                     >
                         <DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                                <Avatar className="h-8 w-8 rounded-lg">
-                                    {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
+                                {/* <Avatar className="h-8 w-8 rounded-lg">
                                     <AvatarFallback className="rounded-lg">D</AvatarFallback>
                                 </Avatar>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -85,7 +85,7 @@ export function NavUser({
                                     <span className="text-muted-foreground truncate text-xs">
                                         {user.email}
                                     </span>
-                                </div>
+                                </div> */}
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
@@ -100,7 +100,14 @@ export function NavUser({
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                            console.log("test")
+                            setID(0)
+
+                            push('/')
+                        }
+
+                        }>
                             <IconLogout />
                             Log out
                         </DropdownMenuItem>

@@ -50,7 +50,6 @@ export default function RootLayout({
           <GlobalProvider>
             <AuthGuard>
               {children}
-
             </AuthGuard>
           </GlobalProvider>
           <Toaster />

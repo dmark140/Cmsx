@@ -1,18 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 
-// Extended query map with optional transform config
-// const queryMap: Record<
-//   string,
-//   {
-//     sql: string;
-//     count: number;
-//     transformType?: 'groupBy';
-//     groupBy?: string;
-//     childKey?: string;
-//     childFields?: string[];
-//   }
-// > = {
+
 
 const queryMap: Record<
   string,
@@ -25,6 +14,23 @@ const queryMap: Record<
     childFields?: string[];
   }
 > = {
+  getAllUsers: {
+    sql: "SELECT * FROM `ousr`",
+    count: 0,
+  },
+  
+
+   updateUserlevel: {
+    sql: "UPDATE `ousr` SET `type` = ?  WHERE `ousr`.`DocEntry` = ?;",
+    count: 2,
+  },
+  
+   updateUserVoid: {
+    sql: "UPDATE `ousr` SET `void` = ? WHERE `ousr`.`DocEntry` = ?;",
+    count: 2,
+  },
+  
+  
   insertUser: {
     sql: "INSERT INTO `ousr` ( `type`, `email`, `FirstName`, `MiddleName`, `LastName`, `user`, `pass`) VALUES ('3', ?, ?, ?, ?, ?, ?);",
     count: 6,
@@ -269,6 +275,12 @@ LIMIT 1;
     sql: "UPDATE `approvals_decisions` SET `decision` = ? WHERE `approvals_decisions`.`DocNum` = ?; ",
     count: 2,
   },
+
+
+  setOusrVoid1: {
+    sql: "UPDATE `ousr` SET `void` = '1' WHERE `ousr`.`DocEntry` = ?;",
+    count: 1,
+  },
   insertselectionlist: {
     sql: "INSERT INTO `selectionlist` ( `CreatedBy`, `Code`, `Name`) VALUES ( ?, ?, ?); ",
     count: 3,
@@ -365,6 +377,36 @@ where A.DocNum = ? and B.void = 1;`,
         LIMIT 1;`,
     count: 1,
   },
+
+  insertRole_managerStaff: {
+    sql: `
+          INSERT INTO role_manager (nav_id, staff)
+    VALUES 
+    (?, ?)
+    ON DUPLICATE KEY UPDATE
+    staff = VALUES(staff)
+    `,
+    count: 2,
+  },
+
+
+  insertRole_managerUser: {
+    sql: `
+          INSERT INTO role_manager (nav_id, user)
+    VALUES 
+    (?, ?)
+    ON DUPLICATE KEY UPDATE
+    user = VALUES(user)
+    `,
+    count: 2,
+  },
+
+  getDashBoard: {
+    sql: `SELECT * FROM role_manager`,
+    count: 0,
+  },
+
+
   getApprovalWithApprovers: {
     sql: `
       SELECT 
@@ -387,96 +429,6 @@ where A.DocNum = ? and B.void = 1;`,
     childFields: ['ApproverDocEntry', 'FullName'],
   },
 };
-
-// export async function POST(request: NextRequest) {
-//   try {
-//     const { queryName, params = [] } = await request.json();
-
-//     const entry = queryMap[queryName];
-//     console.log("Query Name:", queryName);
-//     console.log("Query :", entry);
-//     if (!entry) {
-//       return NextResponse.json(
-//         { success: false, message: "Query not allowed" },
-//         { status: 403 }
-//       );
-//     }
-
-//     if (params.length !== entry.count) {
-//       return NextResponse.json(
-//         { success: false, message: "Invalid parameter count" },
-//         { status: 400 }
-//       );
-//     }
-
-//     const connection = await mysql.createConnection({
-//       host: process.env.DB_HOST,
-//       user: process.env.DB_USER,
-//       password: process.env.DB_PASSWORD,
-//       database: process.env.DB_DATABASE,
-//     });
-
-//     if (entry.transformType === 'groupBy') {
-//       const [rawRows] = await connection.execute(entry.sql, params);
-//       await connection.end();
-
-//       const rows = rawRows as mysql.RowDataPacket[];
-
-//       if (!rows.length) {
-//         return NextResponse.json({ success: false, message: "No record found" });
-//       }
-
-//       const groupedMap: Record<string, any> = {};
-
-//       rows.forEach(row => {
-//         const key = row[entry.groupBy!];
-//         if (!groupedMap[key]) {
-//           const base: Record<string, any> = { ...row };
-//           entry.childFields?.forEach(field => delete base[field]);
-//           base[entry.childKey!] = [];
-//           groupedMap[key] = base;
-//         }
-
-//         if (row[entry.childFields![0]]) {
-//           const child: Record<string, any> = {};
-//           entry.childFields?.forEach(field => {
-//             child[field] = row[field];
-//           });
-
-//           // Allow duplicates: push every child without deduplication
-//           groupedMap[key][entry.childKey!].push(child);
-//         }
-//       });
-
-//       return NextResponse.json({
-//         success: true,
-//         data: Object.values(groupedMap),
-//       });
-//     }
-
-//     // Regular non-transform queries
-//     console.log("execute entry.sql" + entry.sql + " params" + params);
-//     const [result] = await connection.execute(entry.sql, params);
-
-//     if (
-//       ['insertselectionlist', 'insertProject', 'insertUser', 'insert_approval', 'insert_approval_approvers', 'setVoidApproval'].includes(queryName)
-//     ) {
-//       const insertId = (result as any).insertId;
-//       await connection.end();
-//       return NextResponse.json({ success: true, insertId });
-//     }
-
-//     await connection.end();
-//     console.log("Query executed successfully:", queryName, result);
-//     return NextResponse.json({ success: true, data: result });
-//   } catch (err: any) {
-//     console.error("Error:", err.message);
-//     return NextResponse.json(
-//       { success: false, message: err.message },
-//       { status: 500 }
-//     );
-//   }
-// }
 
 export async function POST(request: NextRequest) {
   try {
