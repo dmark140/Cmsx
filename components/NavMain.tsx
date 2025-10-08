@@ -69,7 +69,7 @@ export default function NavMain() {
           </SidebarMenuButton>
         ))}
 
-      <Button onClick={getDashBoard}>Refresh Dashboard</Button>
+      {/* <Button onClick={getDashBoard}>Refresh Dashboard</Button> */}
     </div>
   )
 }
