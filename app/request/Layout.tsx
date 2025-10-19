@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { useGlobalContext } from '@/context/GlobalContext'
 import { useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/card'
-import { limitText } from '@/lib/utils'
+import { limitText, runQuery } from '@/lib/utils'
 import { useGlobalPush } from '@/lib/router/useGlobalPush'
 type Project = {
   DocEntry: number;
@@ -18,12 +18,45 @@ type Project = {
   void: number;
 };
 
+
+
+function normalizeProjectsResponse(data: any): Project[] {
+  // Handle structure: { data: [ [ {...} ], {...meta...} ] }
+  const raw = data?.data?.[0];
+
+  if (Array.isArray(raw)) {
+    // already an array of Project
+    return raw as Project[];
+  }
+
+  if (raw && typeof raw === "object") {
+    // single project object
+    return [raw as Project];
+  }
+
+  return []; // fallback if no valid data
+}
+
 export default function Layout() {
   const { push } = useGlobalPush()
 
-  const { setFormIdRequested } = useGlobalContext();
+  const { setFormIdRequested, ID } = useGlobalContext();
   const [Loading, setLoading] = useState(false)
   const [projects, setProjects] = useState<Project[]>([])
+
+
+
+  function NormalizeProjectsResponse(data: any): Project[] {
+    const raw = data?.data?.[0];
+    if (Array.isArray(raw)) {
+      return raw as Project[];
+    }
+    if (raw && typeof raw === "object") {
+      return [raw as Project];
+    }
+    return [];
+  }
+
 
   const GetProjects = async () => {
     try {
@@ -32,13 +65,21 @@ export default function Layout() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          queryName: "getProjecsVoid1",
-          params: [],
+          queryName: "getProjecsVoidwID",
+          params: [ID],
         }),
       });
-      const data: { data: Project[] } = await res.json();
+      // const res = await runQuery("getProjecsVoid1", [ID])
+      // const data: { data: Project[] } = await res.json();
+      const data = await res.json();
+      console.log({ data })
       if (res.ok) {
-        setProjects(data.data)
+        // setProjects(data.data[0])
+        const projects = normalizeProjectsResponse(data);
+        console.log({ projects })
+        setProjects(projects);
+
+
       } else {
         console.error("Error fetching projects:", data);
       }
@@ -68,8 +109,9 @@ export default function Layout() {
                 }
                 }>
                   <p className='font-semibold   text-blue-600'> {limitText(item.Title, 80)}</p>
-                  <p className='text-foreground'> {limitText(item.Disc, 80)}</p>
-                  <p className='text-xs text-muted '>Last updated {formatDistanceToNow(new Date(item.createdDate), { addSuffix: true })}</p>
+                  {/* <p className='text-foreground'> {limitText(item.Disc, 80)}</p> */}
+                  <p className='text-foreground'> {item.Disc}</p>
+                  <p className='text-xs text-white/30 '>Last updated {formatDistanceToNow(new Date(item.createdDate), { addSuffix: true })}</p>
                 </div>
               </TableCell>
             </TableRow>
@@ -78,7 +120,7 @@ export default function Layout() {
       </Table>
 
       <p className='text-center text-muted-foreground'>
-        {projects.length <= 0 && "*No record found*"}
+        {projects?.length <= 0 && "*No record found*"}
       </p>
 
     </>

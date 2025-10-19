@@ -45,6 +45,7 @@ type ApprovalDecision = {
   project_id: number
   createdDate: Date
   FinalApprovalStatus: string
+  CreatedBy?: number
 }
 
 export default function Layout() {
@@ -73,6 +74,7 @@ export default function Layout() {
           limit: 9
         }
       )
+      console.log({ res })
       if (res.data?.length > 0) {
         setPage(res.pagination?.page ?? 1);
         setMaxPage(res.pagination?.totalPages ?? 1);
@@ -135,11 +137,17 @@ export default function Layout() {
     }
   };
 
-  const setApprovalState = async (state: Number, iDocEntry: number, project_id?: number, DocNum?: number) => {
+  const setApprovalState = async (state: Number, iDocEntry: number, project_id?: number, DocNum?: number, Title?: string, requestedBy?: number) => {
     try {
 
       console.log({ state, iDocEntry, project_id, DocNum })
       await runQuery("setApprovalState", [state, iDocEntry])
+      let msg =
+        state == 1 ? "Approved" :
+          state == 2 ? "Rejected" :
+            state == 3 ? "Pending" : ""
+
+      await runQuery("insertNotif", [ID, requestedBy, Title, Title + " " + msg])
       if (project_id == 1) await runQuery("setOusrVoid1", [DocNum])
 
     } catch (erro) {
@@ -231,9 +239,9 @@ export default function Layout() {
             return (
               <TableRow key={index} className={isEditable ? "" : "bg-muted"}>
                 <TableCell>
-                  {isEditable} ☺
-                  {ID}
-                  <Checkbox
+                  {/* {isEditable} 
+                  {ID} */}
+                  {/* <Checkbox
                     disabled={!isEditable}
                     checked={isChecked}
                     onCheckedChange={(checked) => {
@@ -245,7 +253,7 @@ export default function Layout() {
                         }
                       })
                     }}
-                  />
+                  /> */}
                 </TableCell>
                 <TableCell>{item.ApprovalNum}</TableCell>
                 <TableCell>
@@ -274,12 +282,13 @@ export default function Layout() {
                       <DropdownMenuContent>
                         <DropdownMenuItem onClick={async () => {
                           console.log({ item })
-
-                          await setApprovalState(1, item.ApprovalNum, item.project_id, item.DocNum)
+                          // return
+                          await setApprovalState(1, item.ApprovalNum, item.project_id, item.DocNum, item.Title, item.CreatedBy)
                           await getData()
                         }}>Approve</DropdownMenuItem>
                         <DropdownMenuItem onClick={async () => {
-                          await setApprovalState(2, item.ApprovalNum)
+
+                          await setApprovalState(2, item.ApprovalNum, item.project_id, item.DocNum, item.Title, item.CreatedBy)
                           await getData()
                         }}
                         >Reject</DropdownMenuItem>
@@ -291,7 +300,7 @@ export default function Layout() {
                 </TableCell>
                 <TableCell>{item.FirstName}, {item.LastName}</TableCell>
                 <TableCell>{item.Title}</TableCell>
-                <TableCell>{item.description}</TableCell>
+                {/* <TableCell>{item.description}</TableCell> */}
               </TableRow>
             )
           })}
@@ -304,7 +313,7 @@ export default function Layout() {
           <Pagination currentPage={page} setPage={setPage} maxPage={MaxPage} onPageChange={getDatawithPage} />
         </div>
         <div className=''>
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger type="button" className="bg-primary text-primary-foreground px-4 py-1.5 disabled:opacity-50" disabled={isUpdating}>
               {isUpdating ? 'Updating...' : 'Global Update'}
             </DropdownMenuTrigger>
@@ -322,7 +331,7 @@ export default function Layout() {
                 Reject
               </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </div>
       </div>
     </div>

@@ -17,13 +17,14 @@ import { useGlobalContext } from "@/context/GlobalContext"
 import { toast } from "sonner"
 import lola from "./lola.png";
 import Image from "next/image"
+import { getGlobalUserName, setGlobalUserName } from "@/lib/globalUser"
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [starded, setstarded] = useState(false)
 
-  const { setUser, settype, setID, setUserLevel } = useGlobalContext()
+  const { setUser, settype, setID, setUserLevel, setUserName } = useGlobalContext()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -53,6 +54,10 @@ export default function LoginPage() {
           setUser(userInfo.user)
           settype(userInfo.type)
           setUserLevel(userInfo.type)
+          setUserName(`${userInfo.DocEntry.toString()} - ${userInfo.FirstName}, ${userInfo.LastName}`)
+          setGlobalUserName(`${userInfo.DocEntry.toString()} - ${userInfo.FirstName}, ${userInfo.LastName}`)
+          console.log(`${userInfo.DocEntry.toString()} - ${userInfo.FirstName}, ${userInfo.LastName}`)
+          console.log(getGlobalUserName())
           setID(userInfo.DocEntry)
         } else {
           toast.warning("Wrong email or password.")

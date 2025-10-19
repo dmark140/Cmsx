@@ -32,15 +32,13 @@ import { useRouter } from "next/navigation"
 import { useGlobalPush } from "@/lib/router/useGlobalPush"
 import { useGlobalContext } from "@/context/GlobalContext"
 
-export function NavUser({
-    user,
-}: {
-    user: {
-        name: string
-        email: string
-        avatar: string
-    }
-}) {
+
+interface NavUserProps {
+    email?: string
+}
+
+
+export function NavUser({ email }: NavUserProps) {
 
     const { push } = useGlobalPush()
 
@@ -63,7 +61,7 @@ export function NavUser({
                             <div className="grid flex-1 text-left text-sm leading-tight">
                                 {/* <span className="truncate font-medium">{user.name}</span> */}
                                 <span className="text-muted-foreground truncate text-xs">
-                                    {user.email}
+                                    {email}
                                 </span>
                             </div>
                             <IconDotsVertical className="ml-auto size-4" />

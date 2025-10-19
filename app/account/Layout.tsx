@@ -15,7 +15,9 @@ export default function Layout() {
       </div>
       <Separator />
       <div>
-        <AccountInfo userId={ID} />
+        {ID &&
+          <AccountInfo userId={ID} />
+        }
       </div>
     </div>
   )

@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/sidebar"
 import NavMain from "./NavMain"
 import { NavUser } from "./NavUser"
+import { useGlobalContext } from "@/context/GlobalContext"
 
 const data = {
   user: {
@@ -154,6 +155,9 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+
+  const { ID, setID, userName } = useGlobalContext();
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -179,7 +183,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser email={userName} />
       </SidebarFooter>
     </Sidebar>
   )

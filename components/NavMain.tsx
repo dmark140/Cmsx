@@ -7,6 +7,7 @@ import { useGlobalContext } from '@/context/GlobalContext'
 import { useGlobalPush } from '@/lib/router/useGlobalPush'
 import { navItems } from '@/lib/NavigationList'
 import { runQuery } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
 
 // 👇 Extend type for local state
 type NavItemType = (typeof navItems)[number] & {
@@ -14,7 +15,23 @@ type NavItemType = (typeof navItems)[number] & {
   href?: string
 }
 
+
+
 export default function NavMain() {
+
+  
+
+  const router = useRouter()
+
+  useEffect(() => {
+    navItems.forEach(item => {
+      if (item.href && item.href !== "/") {
+        router.prefetch(item.href)
+      }
+    })
+  }, [router])
+
+  
   const { push } = useGlobalPush()
   const { setloading, UserLevel } = useGlobalContext()
   const [allowedNavs, setAllowedNavs] = useState<NavItemType[]>([])

@@ -1,36 +1,70 @@
 import { NextRequest, NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 
-
-
 const queryMap: Record<
   string,
   {
     sql: string;
     count: number;
-    transformType?: 'groupBy';
+    transformType?: "groupBy";
     groupBy?: string;
     childKey?: string;
     childFields?: string[];
   }
 > = {
+
+  getNotifById: {
+    sql: `SELECT * FROM user_notifications WHERE notif_to_id = ?`,
+    count: 1,
+  },
+  updateIsRead: {
+    sql: `UPDATE user_notifications SET isRead = '1' WHERE user_notifications.DocEntry = ?`,
+    count: 1,
+  },
+  insertNotif: {
+    sql: `INSERT INTO user_notifications 
+    ( created_by, notif_to_id, title, msg)
+    VALUES
+    ( ?,?,?,?)`,
+    count: 4,
+  },
+  getAuditLogsByDate: {
+    sql: `
+    SELECT 
+      id,
+      table_name,
+      record_id,
+      action_type,
+      old_data,
+      new_data,
+      user_name,
+      created_at
+    FROM audit_log
+    WHERE created_at BETWEEN CONCAT(?, ' 00:00:00') AND CONCAT(?, ' 23:59:59')
+    ORDER BY created_at DESC
+  `,
+    count: 2,
+  },
+
+
+
   getAllUsers: {
     sql: "SELECT * FROM `ousr`",
     count: 0,
   },
-  
 
-   updateUserlevel: {
+
+  updateUserlevel: {
     sql: "UPDATE `ousr` SET `type` = ?  WHERE `ousr`.`DocEntry` = ?;",
     count: 2,
   },
-  
-   updateUserVoid: {
+
+  updateUserVoid: {
     sql: "UPDATE `ousr` SET `void` = ? WHERE `ousr`.`DocEntry` = ?;",
     count: 2,
   },
-  
-  
+
+
   insertUser: {
     sql: "INSERT INTO `ousr` ( `type`, `email`, `FirstName`, `MiddleName`, `LastName`, `user`, `pass`) VALUES ('3', ?, ?, ?, ?, ?, ?);",
     count: 6,
@@ -177,7 +211,7 @@ distinct
     count: 0,
   },
   getUserByEmail: {
-    sql: "SELECT * FROM OUSR WHERE user = ? LIMIT 1",
+    sql: "SELECT * FROM OUSR WHERE DocEntry = ? LIMIT 1",
     count: 1,
   },
   getUserWithPassword: {
@@ -228,6 +262,11 @@ LIMIT 1;
     sql: "SELECT * FROM `projects` where void = 1;",
     count: 0,
   },
+
+  getProjecsVoidwID: {
+    sql: "CALL FormListPerUserId(?)",
+    count: 1,
+  },
   getListOfApprovals: {
     sql: "SELECT * FROM `projects` where void = 1;",
     count: 0,
@@ -248,16 +287,23 @@ LIMIT 1;
     sql: "INSERT INTO approvals_decisions (DocEntry, ApprovalID, ApprovalApproverID) SELECT ?,A.DocEntry, B.uID FROM approvals A LEFT JOIN approvals_approvers B ON A.DocEntry = B.DocEntry AND A.void = 1 WHERE A.project_id = ? AND A.void = 1;",
     count: 2,
 
+  }, getApprovers: {
+    sql: `SELECT B.FirstName,B.LastName,B.MiddleName FROM approvals_approvers A
+    LEFT JOIN ousr B on A.uID = B.DocEntry
+    where A.DocEntry = ?`,
+    count: 1,
+
   },
   getForApproval: {
     sql: `
-    SELECT * FROM (
+    SELECT distinct * FROM (
       SELECT A.createdDate,A.DocNum AS ApprovalNum, A.DocEntry AS DocNum, B.FirstName, B.LastName, B.MiddleName, 
-             C.Title, C.description, A.decision, C.project_id, V.FinalApprovalStatus, A.ApprovalApproverID 
+             C.Title, C.description, A.decision, C.project_id, V.FinalApprovalStatus, A.ApprovalApproverID ,XX.CreatedBy
       FROM approvals_decisions A 
       LEFT JOIN ousr B ON A.ApprovalApproverID = B.DocEntry 
       LEFT JOIN approvals C ON C.DocEntry = A.ApprovalID 
       LEFT JOIN vwdmf_approval_status V ON V.project_id = C.project_id AND V.DocEntry = A.DocEntry 
+  		LEFT JOIN projects_data_a_header XX on XX.DocEntry = A.DocEntry
       WHERE A.void = 1 AND C.void = 1 AND B.void = 1 
         AND (? = 0 OR A.ApprovalApproverID = ?) 
         AND (? = 'all' OR V.FinalApprovalStatus = ?) 
@@ -270,6 +316,55 @@ LIMIT 1;
   getUserForApproval: {
     sql: "SELECT C.* FROM approvals_decisions A LEFT JOIN approvals B on B.DocEntry = A.ApprovalID LEFT JOIN ousr C on C.DocEntry = A.docEntry where A.DocEntry = ? LIMIT 1; ",
     count: 1,
+  },
+
+  getUnBooked: {
+    sql: `
+SELECT  
+    A.DocEntry
+    ,B.FirstName
+    ,B.MiddleName
+    ,B.LastName
+    ,C.Title,
+    C.Disc,
+    E.FinalApprovalStatus,
+    E.project_id projectID
+        ,A.createdDate
+        ,A.CreatedBy
+
+    FROM projects_data_a_header A 
+    LEFT JOIN ousr B on A.CreatedBy = B.DocEntry
+    LEFT JOIN projects C on C.DocEntry = A.ProjectID
+	LEFT JOIN vwdmf_approval_status E on E.project_id = C.DocEntry and E.DocEntry = A.DocEntry
+    where A.DocEntry not in (SELECT projects_data_a_header_entry FROM bookings WHERE void = 1) and     A.ProjectID != 24
+      `,
+    count: 0,
+  },
+
+
+  getBooked: {
+    sql: `
+SELECT  
+    A.DocEntry
+    ,B.FirstName
+    ,B.MiddleName
+    ,B.LastName
+    ,C.Title,
+    C.Disc,
+    E.FinalApprovalStatus,
+    E.project_id projectID
+        ,A.createdDate
+        ,A.CreatedBy
+	,S.bookingDate
+    FROM projects_data_a_header A 
+    LEFT JOIN ousr B on A.CreatedBy = B.DocEntry
+    LEFT JOIN projects C on C.DocEntry = A.ProjectID
+	LEFT JOIN vwdmf_approval_status E on E.project_id = C.DocEntry and E.DocEntry = A.DocEntry
+    LEFT JOIN bookings S on S.projects_data_a_header_entry = A.DocEntry and S.void = 1
+    where A.DocEntry  in (SELECT projects_data_a_header_entry FROM bookings WHERE void = 1) and     A.ProjectID != 24
+    
+    and S.bookingDate BETWEEN ? and ?`,
+    count: 2,
   },
   setApprovalState: {
     sql: "UPDATE `approvals_decisions` SET `decision` = ? WHERE `approvals_decisions`.`DocNum` = ?; ",
@@ -430,122 +525,311 @@ where A.DocNum = ? and B.void = 1;`,
   },
 };
 
+
 export async function POST(request: NextRequest) {
+  const { queryName, params = [], options = {}, finalOptions = {} } = await request.json();
+  console.log({ options });
+  console.log({ finalOptions });
+
+  const entry = queryMap[queryName];
+  if (!entry)
+    return NextResponse.json({ success: false, message: "Query not allowed" }, { status: 403 });
+
+  if (params.length !== entry.count)
+    return NextResponse.json({ success: false, message: "Invalid parameter count" }, { status: 400 });
+
+  const connection = await mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+  });
+
+  // 🧩 helper: detect key column name dynamically
+  async function getPrimaryKeyColumn(table_name: string) {
+    const [columns] = await connection.query<any[]>(
+      `SELECT COLUMN_NAME 
+     FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE TABLE_NAME = ? 
+      AND COLUMN_NAME IN ('id', 'DocEntry', 'DocNum') 
+      AND TABLE_SCHEMA = DATABASE()`,
+      [table_name]
+    );
+
+    const colList = (columns as any[]).map(c => c.COLUMN_NAME);
+
+    return colList.includes("id")
+      ? "id"
+      : colList.includes("DocEntry")
+        ? "DocEntry"
+        : colList.includes("DocNum")
+          ? "DocNum"
+          : null;
+  }
+
   try {
-    const { queryName, params = [], options = {} } = await request.json();
+    let old_data: any = null;
+    let new_data: any = null;
+    let record_id: string | number | null = null;
+    let table_name = "unknown_table";
 
-    const entry = queryMap[queryName];
-    if (!entry) {
-      return NextResponse.json(
-        { success: false, message: "Query not allowed" },
-        { status: 403 }
+    const sqlText = entry.sql.toLowerCase();
+    const isInsert = sqlText.startsWith("insert");
+    const isUpdate = sqlText.startsWith("update");
+    const isDelete = sqlText.startsWith("delete");
+
+    // 🧩 Extract table name
+    const match = entry.sql.match(/(?:into|update|from)\s+`?(\w+)`?/i);
+    if (match) table_name = match[1];
+
+    // 🧾 Get key column
+    const keyColumn = (await getPrimaryKeyColumn(table_name)) ?? "id";
+
+    // 🧾 Fetch old data BEFORE update/delete
+    if (isUpdate || isDelete) {
+      const targetId = params[params.length - 1];
+      const [oldRows] = await connection.query(
+        `SELECT * FROM \`${table_name}\` WHERE \`${keyColumn}\` = ? LIMIT 1`,
+        [targetId]
       );
+      old_data = (oldRows as any)[0] ?? null;
+      record_id = targetId;
     }
 
-    if (params.length !== entry.count) {
-      return NextResponse.json(
-        { success: false, message: "Invalid parameter count" },
-        { status: 400 }
-      );
-    }
+    // 🧠 Execute main SQL
+    const [result] = await connection.query(entry.sql, params);
 
-    const connection = await mysql.createConnection({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
-    });
-
-    if (entry.transformType === 'groupBy') {
-      const [rawRows] = await connection.execute(entry.sql, params);
-      await connection.end();
-
-      const rows = rawRows as mysql.RowDataPacket[];
-
-      if (!rows.length) {
-        return NextResponse.json({ success: false, message: "No record found" });
+    // 🆕 Fetch new data AFTER INSERT
+    console.log({ table_name });
+    if (isInsert) {
+      record_id = (result as any).insertId ?? null;
+      if (record_id) {
+        const [rows] = await connection.query(
+          `SELECT * FROM \`${table_name}\` WHERE \`${keyColumn}\` = ? LIMIT 1`,
+          [record_id]
+        );
+        new_data = (rows as any)[0] ?? null;
+      } else {
+        new_data = { params };
       }
-
-      const groupedMap: Record<string, any> = {};
-
-      rows.forEach(row => {
-        const key = row[entry.groupBy!];
-        if (!groupedMap[key]) {
-          const base: Record<string, any> = { ...row };
-          entry.childFields?.forEach(field => delete base[field]);
-          base[entry.childKey!] = [];
-          groupedMap[key] = base;
-        }
-
-        if (row[entry.childFields![0]]) {
-          const child: Record<string, any> = {};
-          entry.childFields?.forEach(field => {
-            child[field] = row[field];
-          });
-          groupedMap[key][entry.childKey!].push(child);
-        }
-      });
-
-      return NextResponse.json({
-        success: true,
-        data: Object.values(groupedMap),
-      });
     }
 
-    // 🔥 Dynamic Pagination
-    let finalSQL = entry.sql;
-    let finalParams = [...params];
-    let total = null;
-
-
-    if (options.paginate) {
-      const limit = Number(options.limit) || 10;
-      const page = Number(options.page) || 1;
-      const offset = (page - 1) * limit;
-
-      finalSQL = entry.sql.trim().replace(/;$/, "") + " LIMIT ? OFFSET ?";
-      finalParams.push(limit, offset);
-
-      const safeSQL = entry.sql.trim().replace(/;$/, "");
-      const countSQL = `SELECT COUNT(*) as total FROM (${safeSQL}) AS total_query`;
-      console.log({ countSQL })
-      const [countRes] = await connection.execute(countSQL, params);
-      total = (countRes as any)[0].total;
-      console.log({ total })
-
+    // 🆕 Fetch new data AFTER UPDATE
+    if (isUpdate) {
+      const targetId = params[params.length - 1];
+      const [newRows] = await connection.query(
+        `SELECT * FROM \`${table_name}\` WHERE \`${keyColumn}\` = ? LIMIT 1`,
+        [targetId]
+      );
+      new_data = (newRows as any)[0] ?? null;
     }
-    console.log({ finalSQL, finalParams })
-    const [result] = await connection.execute(finalSQL.trim(), finalParams);
-    console.log({ result })
 
-    if (
-      ['insert_chart_of_accounts', 'setApproval', 'insert_projects_data_b_lines', 'insert_projects_data_a_header', 'insertselectionlist', 'insertProjectRequirement', 'insertProject', 'insertUser', 'insert_approval', 'insert_approval_approvers', 'setVoidApproval'].includes(queryName)
-    ) {
-      const insertId = (result as any).insertId;
-      await connection.end();
-      return NextResponse.json({ success: true, insertId });
+    if (isDelete) new_data = null;
+
+    // 🧾 Audit logging
+    if (isInsert || isUpdate || isDelete) {
+      const actorName =
+        finalOptions?.userName?.trim() || finalOptions?.user_name?.trim() || "system";
+
+      await logAudit(
+        connection,
+        table_name,
+        record_id,
+        isInsert ? "INSERT" : isUpdate ? "UPDATE" : "DELETE",
+        old_data,
+        new_data,
+        actorName
+      );
     }
 
     await connection.end();
 
-    return NextResponse.json({
-      success: true,
-      data: result,
-      ...(options.paginate && {
-        pagination: {
-          total,
-          page: options.page,
-          limit: options.limit,
-          totalPages: Math.ceil(total / options.limit),
-        },
-      }),
-    });
+    // ✅ Return insertId if applicable
+    if (
+      [
+        "insert_chart_of_accounts",
+        "setApproval",
+        "insert_projects_data_b_lines",
+        "insert_projects_data_a_header",
+        "insertselectionlist",
+        "insertProjectRequirement",
+        "insertProject",
+        "insertUser",
+        "insert_approval",
+        "insert_approval_approvers",
+        "setVoidApproval",
+      ].includes(queryName)
+    ) {
+      const insertId = (result as any).insertId;
+      return NextResponse.json({ success: true, insertId });
+    }
 
+    return NextResponse.json({ success: true, data: result });
   } catch (err: any) {
-    console.error("Error:", err.message);
-    return NextResponse.json(
-      { success: false, message: err.message },
-      { status: 500 }
-    );
+    console.error("Error:", err);
+    await connection.end();
+    return NextResponse.json({ success: false, message: err.message }, { status: 500 });
   }
+}
+
+
+// export async function POST(request: NextRequest) {
+//   const { queryName, params = [], options = {}, finalOptions = {} } = await request.json();
+//   console.log({ options })
+//   console.log({ finalOptions })
+//   const entry = queryMap[queryName];
+//   if (!entry)
+//     return NextResponse.json(
+//       { success: false, message: "Query not allowed" },
+//       { status: 403 }
+//     );
+
+//   if (params.length !== entry.count)
+//     return NextResponse.json(
+//       { success: false, message: "Invalid parameter count" },
+//       { status: 400 }
+//     );
+
+//   const connection = await mysql.createConnection({
+//     host: process.env.DB_HOST,
+//     user: process.env.DB_USER,
+//     password: process.env.DB_PASSWORD,
+//     database: process.env.DB_DATABASE,
+//   });
+
+//   try {
+//     let old_data: any = null;
+//     let new_data: any = null;
+//     let record_id: string | number | null = null;
+//     let table_name = "unknown_table";
+
+//     const sqlText = entry.sql.toLowerCase();
+//     const isInsert = sqlText.startsWith("insert");
+//     const isUpdate = sqlText.startsWith("update");
+//     const isDelete = sqlText.startsWith("delete");
+
+//     // 🧩 Extract table name early
+//     const match = entry.sql.match(/(?:into|update|from)\s+`?(\w+)`?/i);
+//     if (match) table_name = match[1];
+
+//     // 🧾 Fetch old data BEFORE update or delete
+//     if (isUpdate || isDelete) {
+//       const whereMatch = entry.sql.match(/where\s+`?(\w+)`?\.`?(\w+)`?\s*=\s*\?/i);
+//       const idColumn = whereMatch ? whereMatch[2] : "id";
+//       const targetId = params[params.length - 1];
+
+//       const [oldRows] = await connection.query(
+//         `SELECT * FROM \`${table_name}\` WHERE \`${idColumn}\` = ?`,
+//         [targetId]
+//       );
+//       old_data = (oldRows as any)[0] ?? null;
+//       record_id = targetId;
+//     }
+
+//     // 🧠 Execute main SQL
+//     const [result] = await connection.query(entry.sql, params);
+
+//     // 🆕 Fetch new data AFTER execution
+//     console.log({ table_name })
+//     if (isInsert) {
+//       record_id = (result as any).insertId ?? null;
+//       if (record_id) {
+//         const [rows] = await connection.query(
+//           `SELECT * FROM \`${table_name}\` WHERE id = ? OR DocEntry = ? LIMIT 1`,
+//           [record_id, record_id]
+//         );
+//         new_data = (rows as any)[0] ?? null;
+//       } else {
+//         new_data = { params };
+//       }
+//     }
+
+//     if (isUpdate) {
+//       const whereMatch = entry.sql.match(/where\s+`?(\w+)`?\.`?(\w+)`?\s*=\s*\?/i);
+//       const idColumn = whereMatch ? whereMatch[2] : "id";
+//       const targetId = params[params.length - 1];
+
+//       const [newRows] = await connection.query(
+//         `SELECT * FROM \`${table_name}\` WHERE \`${idColumn}\` = ?`,
+//         [targetId]
+//       );
+//       new_data = (newRows as any)[0] ?? null;
+//     }
+
+//     if (isDelete) new_data = null;
+
+//     // 🧾 Log to audit trail
+//     if (isInsert || isUpdate || isDelete) {
+//       const actorName =
+//         finalOptions?.userName?.trim() || finalOptions?.user_name?.trim() || "system";
+
+//       await logAudit(
+//         connection,
+//         table_name,
+//         record_id,
+//         isInsert ? "INSERT" : isUpdate ? "UPDATE" : "DELETE",
+//         old_data,
+//         new_data,
+//         actorName
+//       );
+//     }
+
+//     await connection.end();
+
+//     // ✅ Return insertId if applicable
+//     if (
+//       [
+//         "insert_chart_of_accounts",
+//         "setApproval",
+//         "insert_projects_data_b_lines",
+//         "insert_projects_data_a_header",
+//         "insertselectionlist",
+//         "insertProjectRequirement",
+//         "insertProject",
+//         "insertUser",
+//         "insert_approval",
+//         "insert_approval_approvers",
+//         "setVoidApproval",
+//       ].includes(queryName)
+//     ) {
+//       const insertId = (result as any).insertId;
+//       return NextResponse.json({ success: true, insertId });
+//     }
+
+//     return NextResponse.json({ success: true, data: result });
+//   } catch (err: any) {
+//     console.error("Error:", err);
+//     await connection.end();
+//     return NextResponse.json(
+//       { success: false, message: err.message },
+//       { status: 500 }
+//     );
+//   }
+// }
+
+
+async function logAudit(
+  connection: mysql.Connection,
+  table_name: string,
+  record_id: string | number | null,
+  action_type: "INSERT" | "UPDATE" | "DELETE",
+  old_data: any,
+  new_data: any,
+  user_name: string
+) {
+  const sql = `
+    INSERT INTO audit_log (table_name, record_id, action_type, old_data, new_data, user_name)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+  const params = [
+    table_name,
+    record_id,
+    action_type,
+    old_data ? JSON.stringify(old_data) : null,
+    new_data ? JSON.stringify(new_data) : null,
+    user_name,
+  ];
+
+  console.log("AUDIT_LOG:", { table_name, record_id, action_type, user_name });
+  await connection.query(sql, params);
 }

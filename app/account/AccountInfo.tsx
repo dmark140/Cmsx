@@ -30,6 +30,8 @@ export default function AccountInfo({ userId }: AccountInfoProps) {
 
   const getDocEntry = async () => {
     const getDocEntryUI = await runQuery("getDocEntryUI", [userId])
+    console.log({ getDocEntryUI })
+    console.log(getDocEntryUI?.data[0].DocEntry)
     setDocEntry(getDocEntryUI?.data[0].DocEntry ?? 0)
   }
 
@@ -40,7 +42,7 @@ export default function AccountInfo({ userId }: AccountInfoProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           queryName: 'getProjectDataValue',
-          params: [userId],
+          params: [DocEntry],
         }),
       })
 
@@ -80,11 +82,11 @@ export default function AccountInfo({ userId }: AccountInfoProps) {
 
   useLayoutEffect(() => {
     getDocEntry()
-  }, [DocEntry])
+  }, [userId])
 
   useLayoutEffect(() => {
     fetchProject()
-  }, [userId])
+  }, [DocEntry])
 
   return (
     <div className=' '>

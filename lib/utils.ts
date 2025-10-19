@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { getGlobalUserName } from "@/lib/globalUser";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -26,6 +27,29 @@ export function limitText(text: string, maxChars: number): string {
 //   return data.data
 // };
 
+// export const runQuery = async (
+//   queryName: string,
+//   params: any[] = [],
+//   options?: {
+//     paginate?: boolean;
+//     page?: number;
+//     limit?: number;
+//   }
+// ) => {
+//   const res = await fetch("/api/sql", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({ queryName, params, options }),
+//   });
+
+//   const data = await res.json();
+//   if (!res.ok) throw new Error(data.message);
+
+//   return data;
+// };
+
+// lib/runQuery.ts
+
 export const runQuery = async (
   queryName: string,
   params: any[] = [],
@@ -33,20 +57,28 @@ export const runQuery = async (
     paginate?: boolean;
     page?: number;
     limit?: number;
+    userName?: string;
   }
 ) => {
+
+  const userName = options?.userName ?? getGlobalUserName() ?? "system";
+
+  // 🧩 Merge username into options so it’s always available
+  const finalOptions = {
+    ...options,
+    userName,
+  };
+  console.log({ finalOptions })
   const res = await fetch("/api/sql", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ queryName, params, options }),
+    body: JSON.stringify({ queryName, params, finalOptions }),
   });
 
   const data = await res.json();
   if (!res.ok) throw new Error(data.message);
-
   return data;
 };
-
 export const canProceed = (...params: (string | number | null | undefined)[]): boolean => {
   return !params.some(param => param === null || param === undefined || param === '');
 };

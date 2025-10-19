@@ -135,9 +135,9 @@ export default function Layout() {
                 const x = await runQuery('setApproval', [q1?.insertId, FormIdRequested])
                 toast.success("Successfully published , awaiting for approval");
                 console.log({ x })
-                if (FormIdRequested > 25) return
-                const y = await runQuery('setApproval', [q1?.insertId, FormIdRequested])
-                console.log({ x })
+                // if (FormIdRequested > 25) return
+                // const y = await runQuery('setApproval', [q1?.insertId, FormIdRequested])
+                // console.log({ x })
 
             } catch (error) {
 

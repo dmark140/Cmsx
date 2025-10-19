@@ -47,14 +47,15 @@ export default function UserInfo({ userId, hidePassword = false }: UserInfoProps
       </div>
 
       {!hidePassword && (
-        <div>
+        <div className='flex items-center gap-2'>
           <Label>Password</Label>
-          <Card className='p-0 m-0 px-2 py-1 flex'>
+              <span className='mt-2'>*******</span>
+          {/* <Card className='p-0 m-0 px-2 py-1 flex'>
             <div className='flex justify-between w-full'>
               <span>*******</span>
               <span className='text-blue-700 p-0 m-0 cursor-pointer'>Change</span>
             </div>
-          </Card>
+          </Card> */}
         </div>
       )}
     </div>

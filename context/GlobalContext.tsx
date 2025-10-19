@@ -10,6 +10,8 @@ import React, {
 type GlobalContextType = {
   user: string;
   setUser: (user: string) => void;
+  userName: string;
+  setUserName: (user: string) => void;
   type: string;
   settype: (type: string) => void;
   ID: number;
@@ -26,24 +28,27 @@ type GlobalContextType = {
 
 const GlobalContext = createContext<GlobalContextType>({
   user: "",
-  setUser: () => {},
+  setUser: () => { },
+  userName: "",
+  setUserName: () => { },
   type: "",
-  settype: () => {},
+  settype: () => { },
   ID: 0,
-  setID: () => {},
+  setID: () => { },
   UserLevel: 0,
-  setUserLevel: () => {},
+  setUserLevel: () => { },
   FormIdRequested: 0,
-  setFormIdRequested: () => {},
+  setFormIdRequested: () => { },
   EvaluationId: 0,
-  setEvaluationId: () => {},
+  setEvaluationId: () => { },
   loading: false,
-  setloading: () => {},
+  setloading: () => { },
 });
 
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   // Default states
   const [user, setUser] = useState("");
+  const [userName, setUserName] = useState("");
   const [type, settype] = useState("");
   const [ID, setID] = useState(0);
   const [UserLevel, setUserLevel] = useState(0);
@@ -55,6 +60,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const savedUser = localStorage.getItem("user");
+      const savedUserName = localStorage.getItem("userName");
       const savedType = localStorage.getItem("type");
       const savedID = localStorage.getItem("ID");
       const savedUserLevel = localStorage.getItem("UserLevel");
@@ -62,6 +68,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
       const savedEvaluationId = localStorage.getItem("EvaluationId");
 
       if (savedUser) setUser(savedUser);
+      if (savedUserName) setUserName(savedUserName);
       if (savedType) settype(savedType);
       if (savedID) setID(Number(savedID));
       if (savedUserLevel) setUserLevel(Number(savedUserLevel));
@@ -74,6 +81,10 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (typeof window !== "undefined") localStorage.setItem("user", user);
   }, [user]);
+  useEffect(() => {
+    if (typeof window !== "undefined") localStorage.setItem("userName", userName);
+  }, [userName]);
+
 
   useEffect(() => {
     if (typeof window !== "undefined") localStorage.setItem("type", type);
@@ -103,6 +114,8 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
       value={{
         user,
         setUser,
+        userName,
+        setUserName,
         type,
         settype,
         ID,

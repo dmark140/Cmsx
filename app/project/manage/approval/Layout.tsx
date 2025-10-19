@@ -12,6 +12,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useGlobalContext } from '@/context/GlobalContext'
 import { limitText, runQuery } from '@/lib/utils'
 import { toast } from 'sonner'
+import Approvers from './approvers'
 
 type Project = { DocEntry: number; Title: string; Disc: string; void: number }
 type Admin = { DocEntry: number; FirstName: string; MiddleName: string; LastName: string }
@@ -223,8 +224,8 @@ export default function Layout() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {projects.map(p => (
-                        <TableRow key={p.DocEntry}>
+                    {projects.map((p, i) => (
+                        <TableRow key={i}>
                             <TableCell>{p.DocEntry}</TableCell>
                             <TableCell>{p.Title}</TableCell>
                             <TableCell className="text-xs">{limitText(p.Disc, 30)}</TableCell>
@@ -247,7 +248,7 @@ export default function Layout() {
                         <p className="text-center text-muted-foreground">...No Record available...</p>
                     ) : (
                         approvals.map((approval, index) => (
-                            <div key={approval.ApprovalDocEntry} className="grid grid-cols-2 gap-4 mb-6 border-b pb-4">
+                            <div key={index} className="grid grid-cols-2 gap-4 mb-6 border-b pb-4">
                                 <div>
                                     <p className="font-bold">Title</p>
                                     <p className="text-muted-foreground">{approval.Title}</p>
@@ -275,14 +276,7 @@ export default function Layout() {
                                         </RadioGroup>
                                     </div>
                                 </div>
-                                <div>
-                                    <p className="font-bold">Approvers</p>
-                                    <ul className="list-disc list-inside text-sm">
-                                        {approval.approvals_approvers?.map((a, i) => (
-                                            <li key={i}>{a.FullName}</li>
-                                        ))}
-                                    </ul>
-                                </div>
+                                <Approvers docEntry={approval.ApprovalDocEntry} key={index} />
                             </div>
                         ))
                     )}
@@ -322,8 +316,8 @@ export default function Layout() {
                                     onChange={e => setSelectedApprover(e.target.value)}
                                 >
                                     <option value="">Select admin</option>
-                                    {admins.map(a => (
-                                        <option key={a.DocEntry} value={a.DocEntry.toString()}>
+                                    {admins.map((a, index) => (
+                                        <option key={index} value={a.DocEntry.toString()}>
                                             {a.FirstName} {a.LastName}
                                         </option>
                                     ))}
@@ -336,8 +330,8 @@ export default function Layout() {
                             <div>
                                 <p className="text-sm font-semibold">Selected Approvers</p>
                                 <ul className="list-disc list-inside text-sm">
-                                    {approvers.map(a => (
-                                        <li key={a.DocEntry}>{a.FirstName} {a.MiddleName} {a.LastName}</li>
+                                    {approvers.map((a, i) => (
+                                        <li key={i}>{a.FirstName} {a.MiddleName} {a.LastName}</li>
                                     ))}
                                 </ul>
                             </div>
