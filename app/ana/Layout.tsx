@@ -14,7 +14,7 @@ export default function Layout() {
       </div>
       <div className=''>
         <h1 className="font-bold mb-4 mx-4">Reports</h1>
-        <Button onClick={() => push("/booking/apnmt/eval/print")} className=' w-fit' variant={"ghost"}>Evaluation</Button>
+        <Button onClick={() => push("/booking/apnmt/eval/print")} className=' w-fit' variant={"ghost"}>Evaluation Report</Button>
       </div>
     </div>
   )

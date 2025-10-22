@@ -68,7 +68,7 @@ export const runQuery = async (
     ...options,
     userName,
   };
-  console.log({ finalOptions })
+  // console.log({ finalOptions })
   const res = await fetch("/api/sql", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

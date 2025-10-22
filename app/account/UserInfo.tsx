@@ -31,25 +31,26 @@ export default function UserInfo({ userId, hidePassword = false }: UserInfoProps
   }
 
   useLayoutEffect(() => {
+    console.log({ userId } , "asd")
     getUserInfo()
   }, [userId])
 
   return (
-    <div className='  sm:grid-cols-3 gap-4'>
-      <div className='flex gap-2'>
+    <div className='  sm:grid-cols-3 gap-2'>
+      <div className='flex '>
         <Label className='font-bold'>Full Name : </Label>
         {fullname || "****"}
       </div>
 
-      <div className='flex gap-2'>
+      <div className='flex '>
         <Label className='font-bold'>Email : </Label>
         {email || "****"}
       </div>
 
       {!hidePassword && (
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center '>
           <Label>Password</Label>
-              <span className='mt-2'>*******</span>
+          <span className='mt-2'>*******</span>
           {/* <Card className='p-0 m-0 px-2 py-1 flex'>
             <div className='flex justify-between w-full'>
               <span>*******</span>

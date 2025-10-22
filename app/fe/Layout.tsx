@@ -1,8 +1,7 @@
 'use client'
 
-import Exporter from '@/app/tools/Exporter';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -11,73 +10,88 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { onlyDate, runQuery } from '@/lib/utils';
+import { onlyDate, runQuery } from '@/lib/utils'
 import React, { useLayoutEffect, useState } from 'react'
-import Printables from './Printables';
-import { PrintPreview } from '@/lib/PrintPreview';
-import ShowPrint from './ShowPrint';
+import { Separator } from '@/components/ui/separator'
+import FeEntry from './se/FeEntry'
+import { useRouter } from 'next/navigation'
 
 type data = {
   DocEntry: number,
+  projects_data_a_headerEntry: number,
   UID: number,
   CreatedBy: number,
   firstname: string,
   MiddleName: string,
   LastName: string,
-  createdDate: string
-  requestedDate: string
+  createdDate: string,
+  requestedDate: string,
   Title: string
 }
 
 export default function Layout() {
-  const [Evaluations, setEvaluations] = useState<data[]>([]);
-  const [show, setShow] = useState(false);
-  const today = new Date().toISOString().split("T")[0];
-
-  const [fromDate, setFromDate] = useState<string>(today);
-  const [toDate, setToDate] = useState<string>(today);
-
+  const [Evaluations, setEvaluations] = useState<data[]>([])
+  const today = new Date().toISOString().split("T")[0]
+  const [fromDate, setFromDate] = useState<string>(today)
+  const [toDate, setToDate] = useState<string>(today)
+  const router = useRouter()
   const getEvls = async () => {
-    const data = await runQuery("getEvls", [fromDate, toDate])
-    if (data) {
-      setEvaluations(data.data)
-    }
+
   }
 
   useLayoutEffect(() => {
+    router.prefetch("/fe/se")
     getEvls()
   }, [])
 
+  const handleAddEntry = (entry: {
+    project_id: number
+    evaluation_id: number
+    evaluation: string
+    requested: string
+    acquired: string
+  }) => {
+    console.log("Received entry from modal:", entry)
+  }
+
+
+
   return (
     <div>
-      <div className='mb-4 float-right'>
+      <div className='flex items-center justify-between'>
+        <div className='font-semibold text-xl'>
+          Fund Entry List
+        </div>
         <div className='flex gap-2 items-center'>
-          <span>Evaluated Date</span>
+          <span>Entry Date</span>
           <Input
             type="date"
             className='w-fit'
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
-          />
+          />-
           <Input
             type="date"
             className='w-fit'
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
           />
-          <Button onClick={getEvls}>Search</Button>
+          <Button onClick={getEvls} variant={"secondary"}>Search</Button>|
+          <Button onClick={() => {
+            router.push("/fe/se")
+          }}>Add New Entry</Button>
         </div>
       </div>
-
+      <Separator className='my-2' />
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Evaluation #</TableHead>
+            <TableHead> #</TableHead>
             <TableHead>Requested By</TableHead>
             <TableHead>Evaluated Date</TableHead>
             <TableHead>Requested Date</TableHead>
             <TableHead>Project</TableHead>
-            <TableHead>Option</TableHead>
+            <TableHead>Acquired Fund</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -90,10 +104,8 @@ export default function Layout() {
                 <TableCell>{onlyDate(evl.createdDate)}</TableCell>
                 <TableCell>{evl.Title}</TableCell>
                 <TableCell>
-                  {/* <Exporter fileName="invoice-123" > */}
-                  {/* <Printables userId={evl.UID} evaluationId={evl.DocEntry} /> */}
-                  {/* </Exporter> */}
-                  <ShowPrint DocEntry={evl.DocEntry} UID={evl.UID} setShow={setShow} show={show} />
+
+
                 </TableCell>
               </TableRow>
             ))

@@ -8,7 +8,7 @@ type ReadOnlyAutoGrowProps = {
 
 export function ExpandableTextArea({
   value,
-  minRows = 4,
+  minRows = 1,
   className = "",
 }: ReadOnlyAutoGrowProps) {
   // Keep line-height consistent (1.5em)

@@ -64,7 +64,7 @@ export default function Layout() {
           ))}
         </TableBody>
       </Table>
-
+          <Button onClick={()=> console.log({schedules})}>Check schedules</Button>
     </div>
   )
 }

@@ -28,37 +28,22 @@ type data = {
 export default function Printables({ userId, evaluationId }: LayoutProps) {
   const [schedules, setSchedules] = useState<data[]>([]);
 
-
-  // const getBookingForEvaluation = async () => {
-
-  //   if (userId === 0) return
-  //   const Data = await runQuery("getBookingForEvaluation", [userId]);
-  //   console.log(Data)
-  //   if (Data) {
-  //     setSchedules(Data.data);
-  //   }
-
-  // }
-
-  // useLayoutEffect(() => {
-  //   getBookingForEvaluation();
-  // }, [userId]);
-
+ 
   return (
-    <div className="mt-4 p-4 relative z-0 text-sm" style={{ maxHeight: "100vh" }}>
+    <div className=" relative z-0 text-xm">
       <Image src={logo}
         className="mx-auto"
         alt=""
-        width={500}
-        height={500} />
-      <h1 className="text-center font-bold my-4"> SOCIAL CASE STUDY REPORT </h1>
+        width={250}
+        height={250} />
+      <h1 className="text-center font-bold "> SOCIAL CASE STUDY REPORT </h1>
       {schedules[0]?.CreatedBy}
       <UserInfo userId={userId} hidePassword={true} />
       <AccountInfo userId={userId} />
       <br />
       <Evaluation evaluationId={evaluationId} />
       {/* <Button onClick={getBookingForEvaluation}>Test</Button> */}
-      <div className="flex justify-between    mt-10">
+      <div className="flex justify-between    mt-2">
         <div className="w-fit ">
           <div>Noted By</div>
           <div className="border-b border-foreground font-bold uppercase">AUDIEMIER L. ZAYAS, RSW</div>

@@ -29,6 +29,8 @@ export default function AccountInfo({ userId }: AccountInfoProps) {
   const [DocEntry, setDocEntry] = useState(0)
 
   const getDocEntry = async () => {
+    console.log({ userId })
+    if (userId == 0 || userId == undefined) return
     const getDocEntryUI = await runQuery("getDocEntryUI", [userId])
     console.log({ getDocEntryUI })
     console.log(getDocEntryUI?.data[0].DocEntry)
@@ -37,6 +39,7 @@ export default function AccountInfo({ userId }: AccountInfoProps) {
 
   const fetchProject = async () => {
     try {
+      // alert(DocEntry)
       const res = await fetch('/api/sql', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -85,19 +88,20 @@ export default function AccountInfo({ userId }: AccountInfoProps) {
   }, [userId])
 
   useLayoutEffect(() => {
+    if (DocEntry == 0 || DocEntry == undefined) return
     fetchProject()
   }, [DocEntry])
 
   return (
     <div className=' '>
-      <div className=''>
+      <div className='text-xs'>
         {data.map((row, idx) => (
           <div className='m-0 p-0  overflow-auto max-w-[1200px]' key={idx}>
             <div className='flex '>
-              <Label className='font-bold'>
+              <Label className=''>
                 {row.iValue == "table" ? "" : row.title}
               </Label>
-              <div className={`p-0 m-0 px-2   ${row.iValue == "table" ? "invisible" : ""}`}>
+              <div className={`p-0 m-0 px-2 font-bold  ${row.iValue == "table" ? "invisible" : ""} border-b `}>
                 : {row.iValue == "table" ? "" : row.iValue}
               </div>
             </div>
@@ -108,7 +112,7 @@ export default function AccountInfo({ userId }: AccountInfoProps) {
       {data.map((row, idx) => (
         row.iValue == "table" && (
           <div key={idx}>
-            <div className='my-4'>
+            <div className=''>
               <Separator />
             </div>
             {row.title}

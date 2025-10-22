@@ -2,8 +2,8 @@
 import { Button } from '@/components/ui/button'
 import { runQuery } from '@/lib/utils'
 import React, { useLayoutEffect, useState } from 'react'
-import { DataTable } from './data-table'
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+
 type formParam = {
     DocEntry: number
     dataNumber: number
@@ -11,11 +11,10 @@ type formParam = {
 }
 
 type cols = {
-    label: number
+    label: string
     Requirements_id: number
     DocNum: number
 }
-
 
 type rows = {
     DocNum: number
@@ -23,6 +22,7 @@ type rows = {
     iValue: string
     LineID: string
 }
+
 export default function FormDialogTable({ DocEntry, dataNumber, projectDataId }: formParam) {
     const [cols, setcols] = useState<cols[]>([])
     const [rows, setrows] = useState<rows[]>([])
@@ -30,24 +30,24 @@ export default function FormDialogTable({ DocEntry, dataNumber, projectDataId }:
 
     const getTableHeader = async () => {
         try {
-            const cols = await runQuery("getvwproject_table_label", [DocEntry])
+            const cols = await runQuery('getvwproject_table_label', [DocEntry])
             console.log({ cols })
             setcols(cols.data)
         } catch (error) {
             console.log(error)
         }
     }
+
     const getTableRows = async () => {
         setloading(true)
         try {
-            const rows = await runQuery("getprojects_data_c_table", [DocEntry, projectDataId])
+            const rows = await runQuery('getprojects_data_c_table', [DocEntry, projectDataId])
             console.log({ rows })
             setrows(rows.data)
         } catch (error) {
             console.log(error)
         }
         setloading(false)
-
     }
 
     useLayoutEffect(() => {
@@ -56,39 +56,39 @@ export default function FormDialogTable({ DocEntry, dataNumber, projectDataId }:
     }, [projectDataId])
 
     return (
-        <div className='overflow-auto'>
-            {/* <DataTable columns={cols} data={cols} /> */}
-            <Table>
-                {/* <TableCaption>End of List</TableCaption> */}
-                <TableHeader>
-                    <TableRow>
+        <div className="w-full">
+            <table className="w-full border border-gray-200 text-xs border-collapse">
+                <thead>
+                    <tr className="bg-gray-100">
                         {cols.map((item, i) => (
-                            <TableHead key={i}>{item?.label}</TableHead>
-                        )
-                        )}
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {[...new Set(rows.map(row => row.LineID))].map((lineId) => (
-                        <TableRow key={lineId}>
+                            <th key={i} className="p-1 font-semibold text-center">
+                                {item?.label}
+                            </th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {[...new Set(rows.map(row => row.LineID))].map(lineId => (
+                        <tr key={lineId}>
                             {cols.map((col, i) => {
                                 const matchedRow = rows.find(
                                     row => row.LineID === lineId && row.Requirements_id === col.DocNum
                                 )
                                 return (
-                                    <TableCell key={i}>
+                                    <td key={i} className="p-1 text-center">
                                         {matchedRow?.iValue || ''}
-                                    </TableCell>
+                                    </td>
                                 )
                             })}
-                        </TableRow>
+                        </tr>
                     ))}
-                </TableBody>
+                </tbody>
+            </table>
 
-            </Table>
-            {loading ? <p className='text-center text-muted-foreground'>Loading...</p> : ""}
 
-            {/* <Button onClick={() => { console.log({ DocEntry, projectDataId }); getTableRows() }}> test</Button> */}
+            {loading && (
+                <p className="text-center text-muted-foreground mt-2">Loading...</p>
+            )}
         </div>
     )
 }

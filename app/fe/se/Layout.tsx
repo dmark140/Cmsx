@@ -13,12 +13,13 @@ import {
 } from '@/components/ui/table'
 import { onlyDate, runQuery } from '@/lib/utils';
 import React, { useLayoutEffect, useState } from 'react'
-import Printables from './Printables';
 import { PrintPreview } from '@/lib/PrintPreview';
-import ShowPrint from './ShowPrint';
-
+import { Separator } from '@/components/ui/separator';
+import FeEntry from './FeEntry';
+import { useGlobalContext } from '@/context/GlobalContext';
 type data = {
   DocEntry: number,
+  projects_data_a_headerEntry: number,
   UID: number,
   CreatedBy: number,
   firstname: string,
@@ -30,6 +31,7 @@ type data = {
 }
 
 export default function Layout() {
+  const { ID } = useGlobalContext()
   const [Evaluations, setEvaluations] = useState<data[]>([]);
   const [show, setShow] = useState(false);
   const today = new Date().toISOString().split("T")[0];
@@ -44,13 +46,35 @@ export default function Layout() {
     }
   }
 
+
+  const handleAddEntry = async (entry: {
+    project_id: number
+    evaluation_id: number
+    evaluation: string
+    requested: string
+    acquired: string
+  }) => {
+    console.log("Received entry from modal:", entry)
+    await runQuery("insertFE", [ID, entry.project_id, entry.requested, entry.acquired])
+
+  }
+
+
   useLayoutEffect(() => {
     getEvls()
   }, [])
 
+  // useEffect(() => {
+
+  // }, [third])
+
+
   return (
     <div>
-      <div className='mb-4 float-right'>
+      <div className='flex items-center justify-between'>
+        <div className='font-semibold text-xl'>
+          Select Evaluated Request
+        </div>
         <div className='flex gap-2 items-center'>
           <span>Evaluated Date</span>
           <Input
@@ -58,7 +82,7 @@ export default function Layout() {
             className='w-fit'
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
-          />
+          />-
           <Input
             type="date"
             className='w-fit'
@@ -68,7 +92,7 @@ export default function Layout() {
           <Button onClick={getEvls}>Search</Button>
         </div>
       </div>
-
+      <Separator className='my-2' />
       <Table>
         <TableHeader>
           <TableRow>
@@ -90,10 +114,11 @@ export default function Layout() {
                 <TableCell>{onlyDate(evl.createdDate)}</TableCell>
                 <TableCell>{evl.Title}</TableCell>
                 <TableCell>
-                  {/* <Exporter fileName="invoice-123" > */}
-                  {/* <Printables userId={evl.UID} evaluationId={evl.DocEntry} /> */}
-                  {/* </Exporter> */}
-                  <ShowPrint DocEntry={evl.DocEntry} UID={evl.UID} setShow={setShow} show={show} />
+                  <FeEntry
+                    project_id={evl.projects_data_a_headerEntry}
+                    evaluation_id={evl.UID}
+                    onAdd={handleAddEntry}
+                  />
                 </TableCell>
               </TableRow>
             ))

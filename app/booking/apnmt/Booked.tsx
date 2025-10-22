@@ -1,11 +1,11 @@
 'use client'
 import { Button } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useGlobalContext } from '@/context/GlobalContext'
+import { useGlobalPush } from '@/lib/router/useGlobalPush'
 import { runQuery } from '@/lib/utils'
 import { format, subDays } from 'date-fns'
 import React, { useEffect, useState, useCallback } from 'react'
-import UnBookedPopOver from './UnBookedPopOver'
 
 type ProjectApproval = {
     DocEntry: number;
@@ -15,12 +15,15 @@ type ProjectApproval = {
     Title: string | null;
     Disc: string | null;
     bookingDate: string | null;
-    CreatedBy: number
+    CreatedBy: number;
+    BookingId: number;
 };
 
 const QUERY_DATE_FORMAT = 'yyyy-MM-dd';
 
 export default function Booked() {
+    const { setEvaluationId } = useGlobalContext()
+    const { push } = useGlobalPush()
     const [data, setdata] = useState<ProjectApproval[]>([])
     const [dateFrom, setDateFrom] = useState(format(subDays(new Date(), 7), QUERY_DATE_FORMAT));
     const [dateTo, setDateTo] = useState(format(new Date(), QUERY_DATE_FORMAT));
@@ -50,6 +53,8 @@ export default function Booked() {
         setDateTo(event.target.value);
     };
 
+    const today = format(new Date(), QUERY_DATE_FORMAT);
+
     return (
         <div>
             <div className="flex space-x-4 p-4 items-center">
@@ -70,7 +75,7 @@ export default function Booked() {
                     onChange={handleDateToChange}
                     className="border p-2 rounded-md"
                 />
-asdasd
+
                 <Button onClick={getData} disabled={isLoading}>
                     {isLoading ? 'Loading...' : 'Refresh Data'}
                 </Button>
@@ -84,7 +89,7 @@ asdasd
                         <TableHead>Requested By</TableHead>
                         <TableHead>Requested Form</TableHead>
                         <TableHead>Booked Date</TableHead>
-                        <TableHead>Re-Book</TableHead>
+                        <TableHead>Evaluate</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -98,25 +103,39 @@ asdasd
                             <TableCell colSpan={6} className="text-center">No booked approvals found for the selected date range.</TableCell>
                         </TableRow>
                     )}
-                    {!isLoading && data.map((e, index) => (
-                        <TableRow key={index} >
-                            <TableCell>{e.DocEntry}</TableCell>
-                            <TableCell>{e.bookingDate
-                                ? format(new Date(e.bookingDate), 'MMM dd, yyyy')
-                                : 'N/A'}
-                            </TableCell>
-                            <TableCell>{e.FirstName} {e.MiddleName} {e.LastName} </TableCell>
-                            <TableCell>{e.Title}</TableCell>
-                            <TableCell>{e.bookingDate
-                                ? format(new Date(e.bookingDate), "yyyy-MM-dd")
-                                : 'N/A'}
-                            </TableCell>
-                            <TableCell>
-                                <UnBookedPopOver DocEntry={e.DocEntry} CreatedBy={e.CreatedBy} Title={e.Title || ""} />
+                    {!isLoading && data.map((e, index) => {
+                        const bookingDateFormatted = e.bookingDate
+                            ? format(new Date(e.bookingDate), QUERY_DATE_FORMAT)
+                            : null;
+                        const isToday = bookingDateFormatted === today;
 
-                            </TableCell>
-                        </TableRow>
-                    ))}
+                        return (
+                            <TableRow key={index} className={isToday ? '' : ''}>
+                                <TableCell>{e.DocEntry}</TableCell>
+                                <TableCell>
+                                    {e.bookingDate
+                                        ? format(new Date(e.bookingDate), 'MMM dd, yyyy')
+                                        : 'N/A'}
+                                </TableCell>
+                                <TableCell>{e.FirstName} {e.MiddleName} {e.LastName}</TableCell>
+                                <TableCell>{e.Title}</TableCell>
+                                <TableCell>
+                                    {e.bookingDate
+                                        ? format(new Date(e.bookingDate), "yyyy-MM-dd")
+                                        : 'N/A'}
+                                </TableCell>
+                                <TableCell>
+                                    {/* <UnBookedPopOver DocEntry={e.DocEntry} CreatedBy={e.CreatedBy} Title={e.Title || ""} /> */}
+                                    <Button onClick={() => {
+                                        // console.log({ e })
+                                        setEvaluationId(e.BookingId)
+                                        push("apnmt/eval")
+                                    }
+                                    }>Evaluate</Button>
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
                 </TableBody>
             </Table>
         </div>

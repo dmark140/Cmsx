@@ -9,6 +9,7 @@ import { useGlobalContext } from "@/context/GlobalContext";
 import Exporter from "@/app/tools/Exporter";
 import Evaluation from "./Evaluation";
 import { runQuery } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type data = {
   CreatedBy: number,
@@ -24,9 +25,11 @@ export default function Layout() {
   const getBookingForEvaluation = async () => {
     if (EvaluationId === 0) return
     const Data = await runQuery("getBookingForEvaluation", [EvaluationId]);
+    console.log({ Data })
+    console.log(Data.data[0].CreatedBy)
     if (Data) {
       setSchedules(Data.data);
-    } 
+    }
   }
 
   useLayoutEffect(() => {
@@ -35,17 +38,25 @@ export default function Layout() {
 
   return (
     <div className="p-4  ">
+      {/* <Button onClick={() => console.log({ schedules, EvaluationId })} >log schedules</Button> */}
+      {/* <Button onClick={getBookingForEvaluation} >log schedules</Button> */}
+
+      <div className="text-xl font-semibold">
+        Evaluation
+      </div>
+        <Separator className="mt-2"/>
+
       <div className="mb-4">
         <div className='my-4'>
-          <UserInfo userId={schedules[0]?.CreatedBy & 0} hidePassword={true} />
+          <UserInfo userId={schedules[0]?.CreatedBy} hidePassword={true} />
         </div>
         <Separator />
         <div>
-          <AccountInfo userId={schedules[0]?.CreatedBy & 0} />
+          <AccountInfo userId={schedules[0]?.CreatedBy} />
         </div>
       </div>
       <Separator />
-      <Evaluation />
+      <Evaluation  />
     </div >
   );
 }

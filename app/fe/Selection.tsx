@@ -12,11 +12,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { onlyDate, runQuery } from '@/lib/utils';
-import React, { useLayoutEffect, useState } from 'react'
-import Printables from './Printables';
-import { PrintPreview } from '@/lib/PrintPreview';
-import ShowPrint from './ShowPrint';
-
+import React, { useLayoutEffect, useState } from 'react' 
+import { PrintPreview } from '@/lib/PrintPreview'; 
 type data = {
   DocEntry: number,
   UID: number,
@@ -29,7 +26,7 @@ type data = {
   Title: string
 }
 
-export default function Layout() {
+export default function Selection() {
   const [Evaluations, setEvaluations] = useState<data[]>([]);
   const [show, setShow] = useState(false);
   const today = new Date().toISOString().split("T")[0];
@@ -93,7 +90,7 @@ export default function Layout() {
                   {/* <Exporter fileName="invoice-123" > */}
                   {/* <Printables userId={evl.UID} evaluationId={evl.DocEntry} /> */}
                   {/* </Exporter> */}
-                  <ShowPrint DocEntry={evl.DocEntry} UID={evl.UID} setShow={setShow} show={show} />
+                  {/* <ShowPrint DocEntry={evl.DocEntry} UID={evl.UID} setShow={setShow} show={show} /> */}
                 </TableCell>
               </TableRow>
             ))

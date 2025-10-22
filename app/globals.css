@@ -205,3 +205,15 @@ td {
   white-space: pre-wrap; /* preserves line breaks */
 }
  
+
+.print-hidden {
+  display: block;
+}
+
+@media print {
+  .print-hidden {
+    display: none !important;
+  }
+}
+
+

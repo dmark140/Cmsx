@@ -13,6 +13,13 @@ const queryMap: Record<
   }
 > = {
 
+  insertFE: {
+    sql: `
+    INSERT INTO fund_entry 
+    ( created_by, project_header_id, requested_fund, acquired_fund)
+    VALUES ( ?, ?, ?, ?);`,
+    count: 4,
+  },
   getNotifById: {
     sql: `SELECT * FROM user_notifications WHERE notif_to_id = ?`,
     count: 1,
@@ -147,7 +154,8 @@ distinct
     LEFT JOIN ousr B on A.CreatedBy = B.DocEntry
     LEFT JOIN projects C on C.DocEntry = A.ProjectID
     LEFT JOIN bookings E on E.projects_data_a_header_entry = A.DocEntry where e.void = 1   
-    and  A.ProjectID != 24`,
+    and  A.ProjectID != 24  and E.DocEntry not in (SELECT bookingid FROM evaluation)`
+    ,
     count: 0,
   },
 
@@ -184,6 +192,7 @@ distinct
   ,F.Title
   ,F.Disc
   ,A.createdDate
+  ,C.DocEntry projects_data_a_headerEntry
   FROM evaluation A
   LEFT JOIN bookings B on A.bookingid = B.DocEntry
   LEFT JOIN projects_data_a_header C on C.DocEntry = B.projects_data_a_header_entry
@@ -355,6 +364,7 @@ SELECT
     E.project_id projectID
         ,A.createdDate
         ,A.CreatedBy
+        ,S.DocEntry BookingId
 	,S.bookingDate
     FROM projects_data_a_header A 
     LEFT JOIN ousr B on A.CreatedBy = B.DocEntry
@@ -363,7 +373,7 @@ SELECT
     LEFT JOIN bookings S on S.projects_data_a_header_entry = A.DocEntry and S.void = 1
     where A.DocEntry  in (SELECT projects_data_a_header_entry FROM bookings WHERE void = 1) and     A.ProjectID != 24
     
-    and S.bookingDate BETWEEN ? and ?`,
+    and S.bookingDate BETWEEN ? and ?  and S.DocEntry not in (SELECT bookingid FROM evaluation)`,
     count: 2,
   },
   setApprovalState: {
@@ -441,8 +451,8 @@ where A.DocNum = ? and B.void = 1;`,
     count: 1,
   },
   insertEvaluation: {
-    sql: "INSERT INTO evaluation ( bookingid, type_of_house, other_source_of_income, occupation, monthly_income, number_of_meals, source_of_water_per_month, source_of_fuel_per_month, source_of_light_per_month, house_and_lot, appliances, economic_condition, expenditures_vs_income_analysis, evaluation_recommendation, problem_presented, economic_and_family_background, assessment) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );",
-    count: 17,
+    sql: "INSERT INTO evaluation ( bookingid, type_of_house, other_source_of_income, occupation, monthly_income, number_of_meals, source_of_water_per_month, source_of_fuel_per_month, source_of_light_per_month, house_and_lot, appliances, economic_condition, expenditures_vs_income_analysis, evaluation_recommendation, problem_presented, economic_and_family_background, assessment , recommendation) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? );",
+    count: 18,
   },
   getprojects_data_c_table: {
     sql: `SELECT A.DocNum,
@@ -833,3 +843,5 @@ async function logAudit(
   console.log("AUDIT_LOG:", { table_name, record_id, action_type, user_name });
   await connection.query(sql, params);
 }
+
+

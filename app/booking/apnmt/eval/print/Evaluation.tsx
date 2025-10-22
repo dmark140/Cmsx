@@ -88,10 +88,10 @@ export default function Evaluation({ evaluationId }: EvaluationComponentProps) {
   }
 
   return (
-    <div className="space-y-1">
+    <div className="">
       {Object.entries(evaluation).map(([key, value]) =>
         longTextFields.includes(key) ? (
-          <div key={key} className="flex flex-col mt-4">
+          <div key={key} className="flex flex-col ">
             <span className="font-bold">{formatKey(key)}</span>
             <ExpandableTextArea
               value={value ?? ""}
@@ -100,7 +100,7 @@ export default function Evaluation({ evaluationId }: EvaluationComponentProps) {
             />
           </div>
         ) : (
-          <div key={key} className="flex">
+          <div key={key} className="flex text-xs">
             <span className="font-bold mr-2">{formatKey(key)}</span>
             <span>{value ?? "-"}</span>
           </div>

@@ -58,6 +58,7 @@ export default function LoginPage() {
           setGlobalUserName(`${userInfo.DocEntry.toString()} - ${userInfo.FirstName}, ${userInfo.LastName}`)
           console.log(`${userInfo.DocEntry.toString()} - ${userInfo.FirstName}, ${userInfo.LastName}`)
           console.log(getGlobalUserName())
+          // alert(userInfo.DocEntry)
           setID(userInfo.DocEntry)
         } else {
           toast.warning("Wrong email or password.")

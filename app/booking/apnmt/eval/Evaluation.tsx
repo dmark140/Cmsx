@@ -17,7 +17,8 @@ type OptionGroup = {
 };
 
 export default function Evaluation() {
-    const { ID } = useGlobalContext();
+    const { ID, EvaluationId } = useGlobalContext();
+
     const objList: OptionGroup[] = [
         { code: "type_of_house", name: "Type of House", list: [{ code: "Concrete" }, { code: "Wood" }, { code: "Concrete w/ wood" }, { code: "Others" }] },
         { code: "other_source_of_income", name: "Other Source of Income", list: [{ code: "Friends" }, { code: "Relatives" }, { code: "Children" }, { code: "Others" }] },
@@ -69,7 +70,8 @@ export default function Evaluation() {
     const [textAreas, setTextAreas] = useState<Record<string, string>>({
         "problem_presented": "",
         "economic_and_family_background": "",
-        "assessment": ""
+        "assessment": "",
+        "recommendation": ""
     });
 
     const [selectedValues, setSelectedValues] = useState<Record<string, string>>({});
@@ -115,11 +117,9 @@ export default function Evaluation() {
             }
             result[key] = textAreas[key].trim();
         }
-
-        console.log(result);
-
+        console.log({ result })
         const res = await runQuery("insertEvaluation", [
-            result.projectId,
+            EvaluationId,
             result.type_of_house,
             result.other_source_of_income,
             result.occupation,
@@ -135,7 +135,8 @@ export default function Evaluation() {
             result.evaluation_recommendation,
             result.problem_presented,
             result.economic_and_family_background,
-            result.assessment
+            result.assessment,
+            result.recommendation
         ]);
         return res;
     };
