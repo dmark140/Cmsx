@@ -16,6 +16,7 @@ type ProjectApproval = {
     Disc: string | null;
     bookingDate: string | null;
     CreatedBy: number
+    BookingId: number
 };
 
 const QUERY_DATE_FORMAT = 'yyyy-MM-dd';
@@ -70,7 +71,6 @@ export default function Booked() {
                     onChange={handleDateToChange}
                     className="border p-2 rounded-md"
                 />
-asdasd
                 <Button onClick={getData} disabled={isLoading}>
                     {isLoading ? 'Loading...' : 'Refresh Data'}
                 </Button>
@@ -112,7 +112,7 @@ asdasd
                                 : 'N/A'}
                             </TableCell>
                             <TableCell>
-                                <UnBookedPopOver DocEntry={e.DocEntry} CreatedBy={e.CreatedBy} Title={e.Title || ""} />
+                                <UnBookedPopOver DocEntry={e.DocEntry} CreatedBy={e.CreatedBy} Title={e.Title || ""} BookingId={e.BookingId} />
 
                             </TableCell>
                         </TableRow>

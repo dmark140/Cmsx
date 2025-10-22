@@ -63,7 +63,7 @@ export default function UnBooked() {
                                     <PopoverContent>Place content for the popover here.</PopoverContent>
                                 </Popover> */}
 
-                                <UnBookedPopOver DocEntry={e.DocEntry} CreatedBy={e.CreatedBy} Title={e.Title || ""} />
+                                <UnBookedPopOver DocEntry={e.DocEntry} CreatedBy={e.CreatedBy} Title={e.Title || ""} BookingId={0} />
                             </TableCell>
                         </TableRow>
                     ))}

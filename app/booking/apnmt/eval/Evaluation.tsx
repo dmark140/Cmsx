@@ -140,7 +140,6 @@ export default function Evaluation() {
         ]);
         return res;
     };
-
     const renderGroup = (group: OptionGroup) => (
         <div key={group.name} className="mb-6">
             <h3 className="font-semibold  w-fit px-2 p-0 rounded-md">{group.name}</h3>
@@ -177,17 +176,12 @@ export default function Evaluation() {
 
     return (
         <div className="mt-4">
-            {/* Grid Section */}
             <div className="grid grid-cols-3 gap-x-4">
                 {objList.map(renderGroup)}
             </div>
-
-            {/* Separate Sections */}
             <div className="mt-8 space-y-6">
                 {extraSections.map(renderGroup)}
             </div>
-
-            {/* Textareas */}
             <div className="mt-8 space-y-6">
                 {Object.keys(textAreas).map((field) => (
                     <div key={field}>
@@ -201,14 +195,13 @@ export default function Evaluation() {
                         />
                     </div>
                 ))}
-            </div>
-
+            </div> 
             <button
                 className="mt-6 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
                 onClick={() => {
                     const values = postValue();
                 }}
-            > Get All Values
+            > Submit
             </button>
         </div>
     );

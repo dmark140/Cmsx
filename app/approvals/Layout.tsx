@@ -143,12 +143,13 @@ export default function Layout() {
       console.log({ state, iDocEntry, project_id, DocNum })
       await runQuery("setApprovalState", [state, iDocEntry])
       let msg =
-        state == 1 ? "Approved" :
+        state == 1 ? "Approved please wait for you appointment, thank you" :
           state == 2 ? "Rejected" :
             state == 3 ? "Pending" : ""
 
-      await runQuery("insertNotif", [ID, requestedBy, Title, Title + " " + msg])
       if (project_id == 1) await runQuery("setOusrVoid1", [DocNum])
+      if (requestedBy != null)
+        await runQuery("insertNotif", [ID, requestedBy, Title, Title + " " + msg])
 
     } catch (erro) {
       console.error(erro)

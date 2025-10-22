@@ -133,6 +133,8 @@ export default function Layout() {
             }
             try {
                 const x = await runQuery('setApproval', [q1?.insertId, FormIdRequested])
+                await runQuery("insertNotif", [ID, ID, projectInfo?.Title + " Request", "You have successfully requested " + projectInfo?.Title])
+
                 toast.success("Successfully published , awaiting for approval");
                 console.log({ x })
                 // if (FormIdRequested > 25) return

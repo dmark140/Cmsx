@@ -17,6 +17,7 @@ import { PrintPreview } from '@/lib/PrintPreview';
 import { Separator } from '@/components/ui/separator';
 import FeEntry from './FeEntry';
 import { useGlobalContext } from '@/context/GlobalContext';
+import ViewFeEntry from './ViewFeEntry';
 type data = {
   DocEntry: number,
   projects_data_a_headerEntry: number,
@@ -27,7 +28,8 @@ type data = {
   LastName: string,
   createdDate: string
   requestedDate: string
-  Title: string
+  Title: string,
+  FunEntry_ID?: number | null,
 }
 
 export default function Layout() {
@@ -56,7 +58,7 @@ export default function Layout() {
   }) => {
     console.log("Received entry from modal:", entry)
     await runQuery("insertFE", [ID, entry.project_id, entry.requested, entry.acquired])
-
+    getEvls()
   }
 
 
@@ -113,12 +115,17 @@ export default function Layout() {
                 <TableCell>{onlyDate(evl.requestedDate)}</TableCell>
                 <TableCell>{onlyDate(evl.createdDate)}</TableCell>
                 <TableCell>{evl.Title}</TableCell>
+                <TableCell> {evl.FunEntry_ID != null ? "Allocated" : "Un-Allocated"}</TableCell>
                 <TableCell>
-                  <FeEntry
-                    project_id={evl.projects_data_a_headerEntry}
-                    evaluation_id={evl.UID}
-                    onAdd={handleAddEntry}
-                  />
+                  {evl.FunEntry_ID == null ?
+                    <FeEntry
+                      project_id={evl.projects_data_a_headerEntry}
+                      evaluation_id={evl.UID}
+                      onAdd={handleAddEntry}
+                    /> :
+                    <ViewFeEntry
+                      evaluation_id={evl.FunEntry_ID} />
+                  } 
                 </TableCell>
               </TableRow>
             ))

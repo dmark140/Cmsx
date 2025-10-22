@@ -16,6 +16,7 @@ import { useGlobalContext } from '@/context/GlobalContext'
 interface UnBookedPopOverProps {
     DocEntry: number;
     CreatedBy: number;
+    BookingId: number;
     Title: string;
 }
 
@@ -33,7 +34,7 @@ const toast = (message: string) => {
     alert(`TOAST: ${message}`);
 }
 
-export default function UnBookedPopOver({ DocEntry, CreatedBy, Title }: UnBookedPopOverProps) {
+export default function UnBookedPopOver({ DocEntry, CreatedBy, Title, BookingId }: UnBookedPopOverProps) {
     const { ID } = useGlobalContext()
     const [open, setOpen] = useState(false)
     const [date, setDate] = React.useState<Date | undefined>()
@@ -64,6 +65,7 @@ export default function UnBookedPopOver({ DocEntry, CreatedBy, Title }: UnBooked
             setOpen(false);
 
             const result = await runQuery("insertBookings", [DocEntry, '', format(tempDate, "yyyy-MM-dd").toString(), ID])
+            await runQuery("updateBookingsVoid0", [BookingId])
             if (result) {
                 await runQuery("insertNotif", [ID, CreatedBy, "Booking of " + Title, Title + " " + " We are inviting you for an interview at " + format(tempDate, "yyyy-MM-dd").toString() + " please bring essential documents"])
             } else {
@@ -94,6 +96,7 @@ export default function UnBookedPopOver({ DocEntry, CreatedBy, Title }: UnBooked
                 </Button>
             </PopoverTrigger>
             <PopoverContent className='w-auto p-3'>
+                {BookingId}
                 <Calendar
                     mode="single"
                     selected={tempDate}

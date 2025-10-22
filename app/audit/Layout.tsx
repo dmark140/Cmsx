@@ -10,7 +10,7 @@ export default function Layout() {
       <div className='grid'>
         <h1 className="font-bold mb-4 mx-4">Modules</h1>
         <Button onClick={() => push("/audit/timeline")} className=' w-fit' variant={"ghost"}>Timeline</Button>
-        <Button onClick={() => { }} className=' w-fit' variant={"ghost"}>Evaluation</Button>
+        <Button onClick={() => push("/audit/beneficiaries")} className=' w-fit' variant={"ghost"}>Beneficiaries</Button>
       </div>
       <div className=''>
         <h1 className="font-bold mb-4 mx-4">Reports</h1>

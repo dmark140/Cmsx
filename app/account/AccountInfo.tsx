@@ -32,7 +32,7 @@ export default function AccountInfo({ userId }: AccountInfoProps) {
     console.log({ userId })
     if (userId == 0 || userId == undefined) return
     const getDocEntryUI = await runQuery("getDocEntryUI", [userId])
-    console.log({ getDocEntryUI })
+    if (getDocEntryUI.data.length <= 0) return
     console.log(getDocEntryUI?.data[0].DocEntry)
     setDocEntry(getDocEntryUI?.data[0].DocEntry ?? 0)
   }
@@ -124,6 +124,12 @@ export default function AccountInfo({ userId }: AccountInfoProps) {
           </div>
         )
       ))}
+
+      <div className='text-primary/50'>
+        {DocEntry == 0 && "For you to proceed, please request a General Intake Sheet."}
+        <br />
+        {DocEntry == 0 && "You can go to [Request > General Intake Sheet]"}
+      </div>
 
       {/* <Button onClick={fetchProject}>Test</Button> */}
     </div>

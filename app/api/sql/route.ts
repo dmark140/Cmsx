@@ -13,6 +13,10 @@ const queryMap: Record<
   }
 > = {
 
+  getFundEntryPerID: {
+    sql: ` SELECT * FROM fund_entry where DocEntry = ?`,
+    count: 1,
+  },
   insertFE: {
     sql: `
     INSERT INTO fund_entry 
@@ -99,8 +103,14 @@ const queryMap: Record<
   },
 
   insertBookings: {
-    sql: "INSERT INTO bookings (projects_data_a_header_entry, Title, bookingDate, CreatedBy) VALUES (?, ?, ?, ?);",
+    sql: `INSERT INTO bookings (projects_data_a_header_entry, Title, bookingDate, CreatedBy) VALUES (?, ?, ?, ?);`,
     count: 4,
+  },
+  
+  updateBookingsVoid0: {
+    sql: `
+      UPDATE bookings SET void = 0 WHERE DocEntry = ?; `,
+    count: 1,
   },
   getprojects_data_a_headerWhereNotInBooking: {
     sql: `SELECT  
@@ -181,25 +191,26 @@ distinct
 
   getEvls: {
     sql: `SELECT 
-    A.DocEntry,
-  E.DocEntry UID
-  ,E.firstname
-  ,E.LastName
-  ,E.MiddleName
-
-  ,B.BookingDate
-  ,C.createdDate requestedDate
-  ,F.Title
-  ,F.Disc
-  ,A.createdDate
-  ,C.DocEntry projects_data_a_headerEntry
-  FROM evaluation A
-  LEFT JOIN bookings B on A.bookingid = B.DocEntry
-  LEFT JOIN projects_data_a_header C on C.DocEntry = B.projects_data_a_header_entry
-  LEFT JOIN ousr E on E.DocEntry = C.CreatedBy
-  LEFT JOIN projects F on F.DocEntry = C.ProjectID
-  where E.DocEntry is not null
-  and A.CreatedDate BETWEEN ? and ?`,
+      A.DocEntry,
+      E.DocEntry UID
+      ,E.firstname
+      ,E.LastName
+      ,E.MiddleName
+      ,B.BookingDate
+      ,C.createdDate requestedDate
+      ,F.Title
+      ,F.Disc
+      ,A.createdDate
+      ,C.DocEntry projects_data_a_headerEntry
+      ,G.DocEntry FunEntry_ID
+      FROM evaluation A
+      LEFT JOIN bookings B on A.bookingid = B.DocEntry
+      LEFT JOIN projects_data_a_header C on C.DocEntry = B.projects_data_a_header_entry
+      LEFT JOIN ousr E on E.DocEntry = C.CreatedBy
+      LEFT JOIN projects F on F.DocEntry = C.ProjectID
+	    LEFT JOIN fund_entry G on G.project_header_id = C.DocEntry
+      where E.DocEntry is not null
+      and A.CreatedDate BETWEEN ? and ?`,
     count: 2,
   },
 
@@ -346,7 +357,8 @@ SELECT
     LEFT JOIN projects C on C.DocEntry = A.ProjectID
 	LEFT JOIN vwdmf_approval_status E on E.project_id = C.DocEntry and E.DocEntry = A.DocEntry
     where A.DocEntry not in (SELECT projects_data_a_header_entry FROM bookings WHERE void = 1) and     A.ProjectID != 24
-      `,
+    and E.FinalApprovalStatus ='Approved'
+    `,
     count: 0,
   },
 
