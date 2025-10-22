@@ -8,9 +8,9 @@ export const navItems = [
     { id: 4, name: "Approvals", href: "/approvals", icon: GitPullRequestCreateIcon },
     { id: 5, name: "qmnger", href: "/qmnger", icon: GitPullRequestCreateIcon },
     { id: -1, name: "User Management", href: "/userrole", icon: Settings2Icon },
-    { id: 6, name: "Settings", href: "/settings", icon: Settings2Icon },
     { id: 7, name: "Audit", href: "/audit", icon: ShieldAlert },
     { id: 8, name: "Notifications", href: "/notifs", icon: Bell },
-    { id: 9, name: "Fund Entry", href: "/fe", icon: MegaphoneIcon },
+    { id: 9, name: "Fund Entry", href: "/fe/se", icon: MegaphoneIcon },
+    { id: 6, name: "Settings", href: "/settings", icon: Settings2Icon },
 ]
 

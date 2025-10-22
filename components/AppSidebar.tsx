@@ -39,8 +39,8 @@ import { useGlobalContext } from "@/context/GlobalContext"
 
 const data = {
   user: {
-    name: "Dean",
-    email: "Dean@TechTown.com",
+    name: "",
+    email: "",
     // avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
