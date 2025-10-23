@@ -42,16 +42,16 @@ export default function FeEntry({ project_id, evaluation_id, onAdd }: FeEntryPro
             <DialogTitle>New Fund Entry</DialogTitle>
           </DialogHeader>
           <form className="grid gap-2" onSubmit={handleSubmit}>
-            <div>
+            {/* <div>
               <Label>Evaluation #</Label>
               <Input
                 required
                 value={evaluation}
                 onChange={(e) => setEvaluation(e.target.value)}
               />
-            </div>
+            </div> */}
             <div>
-              <Label>Requested Fund</Label>
+              <Label className='pb-2'>Requested Fund</Label>
               <Input
                 required
                 value={requested}
@@ -59,7 +59,7 @@ export default function FeEntry({ project_id, evaluation_id, onAdd }: FeEntryPro
               />
             </div>
             <div>
-              <Label>Acquired Fund</Label>
+              <Label className='pb-2'>Acquired Fund</Label>
               <Input
                 required
                 value={acquired}

@@ -47,8 +47,8 @@ export default function ViewFeEntry({ evaluation_id }: FeEntryProps) {
                     </DialogHeader>
                     <Label>Requested Fund : Php{data[0].requested_fund}</Label>
                     <Label>Acquired Fund : Php{data[0].acquired_fund}</Label>
-                    <Button onClick={getdat}>getdat</Button>
-
+                    {/* <Button onClick={getdat}>getdat</Button> */}
+        <Button onClick={()=> setopen(false)}>Confirm</Button>
                 </DialogContent>
             </Dialog>
         </div>

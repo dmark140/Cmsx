@@ -107,7 +107,14 @@ export default function FormDialog({ DocEntry, onClose }: ShowProjectProps) {
                             {data.map((row, idx) => (
                                 <div className='m-0 p-0  mb-4 overflow-auto max-w-[1200px]' key={idx}>
                                     <span className="block mb-1 font-semibold">{row.title}</span>
-                                    {row.iValue == "table" ? <FormDialogTable DocEntry={row.Requirements_id} dataNumber={row.dataNumber} projectDataId={DocEntry} /> : row.iValue}
+                                    
+                                    {row.iValue == "table" ? <FormDialogTable DocEntry={row.Requirements_id} dataNumber={row.dataNumber} projectDataId={DocEntry} />
+                                     :
+                                     row.type == "file" ?
+                                        <a href={`${row.iValue}`} target='_blank' className='text-blue-400'>check file</a>
+                                     :
+                                     row.iValue}
+
                                     <Separator />
                                 </div>
                             ))}
@@ -119,6 +126,7 @@ export default function FormDialog({ DocEntry, onClose }: ShowProjectProps) {
                     {/* <AlertDialogCancel>Cancel</AlertDialogCancel> */}
                     {/* <Button onClick={() => console.log({ data, DocEntry })}>Check</Button> */}
                     <AlertDialogAction>Continue</AlertDialogAction>
+                    
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

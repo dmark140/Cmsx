@@ -115,7 +115,7 @@ export default function AccountInfo({ userId }: AccountInfoProps) {
             <div className=''>
               <Separator />
             </div>
-            {row.title}
+            <span className='text-xs font-semibold'>{row.title}</span>
             <FormDialogTable
               DocEntry={row.Requirements_id}
               dataNumber={row.dataNumber}

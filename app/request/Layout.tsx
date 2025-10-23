@@ -112,7 +112,7 @@ export default function Layout() {
                   <p className='font-semibold   text-blue-600'> {limitText(item.Title, 80)}</p>
                   {/* <p className='text-foreground'> {limitText(item.Disc, 80)}</p> */}
                   <p className='text-foreground'> {item.Disc}</p>
-                  <p className='text-xs text-white/30 '>Last updated {formatDistanceToNow(new Date(item.createdDate), { addSuffix: true })}</p>
+                  <p className='text-xs text-primary/50 '>Last updated {formatDistanceToNow(new Date(item.createdDate), { addSuffix: true })}</p>
                 </div>
               </TableCell>
             </TableRow>

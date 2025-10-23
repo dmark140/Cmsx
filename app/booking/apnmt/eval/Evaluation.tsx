@@ -3,6 +3,8 @@
 import { Input } from '@/components/ui/input';
 import { useGlobalContext } from '@/context/GlobalContext';
 import { runQuery } from '@/lib/utils';
+import { routeModule } from 'next/dist/build/templates/pages';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -16,9 +18,16 @@ type OptionGroup = {
     list: OptionItem[];
 };
 
-export default function Evaluation() {
-    const { ID, EvaluationId } = useGlobalContext();
 
+type EvaluationProps = {
+  userId: number
+}
+
+    
+export default function Evaluation({ userId }: EvaluationProps) {
+    const { ID, EvaluationId } = useGlobalContext();
+    const [loading,setloading] = useState(false)
+    const route = useRouter()
     const objList: OptionGroup[] = [
         { code: "type_of_house", name: "Type of House", list: [{ code: "Concrete" }, { code: "Wood" }, { code: "Concrete w/ wood" }, { code: "Others" }] },
         { code: "other_source_of_income", name: "Other Source of Income", list: [{ code: "Friends" }, { code: "Relatives" }, { code: "Children" }, { code: "Others" }] },
@@ -93,7 +102,9 @@ export default function Evaluation() {
     };
 
     const postValue = async () => {
-        const result: Record<string, string> = {};
+        setloading(true)
+       try {
+         const result: Record<string, string> = {};
         result.projectId = ID.toString(); // Example only
 
         const allGroups = [...objList, ...extraSections];
@@ -117,7 +128,6 @@ export default function Evaluation() {
             }
             result[key] = textAreas[key].trim();
         }
-        console.log({ result })
         const res = await runQuery("insertEvaluation", [
             EvaluationId,
             result.type_of_house,
@@ -138,7 +148,18 @@ export default function Evaluation() {
             result.assessment,
             result.recommendation
         ]);
-        return res;
+
+        // return res;
+                await runQuery("insertNotif", [ID, userId, "Evaluation","You have been evaluated please wait for the fund update"])
+        route.push("/booking/apnmt")
+        setloading(false)
+       
+    } catch (error) {
+        setloading(false)
+        console.log({error})
+       }
+        setloading(false)
+
     };
     const renderGroup = (group: OptionGroup) => (
         <div key={group.name} className="mb-6">
@@ -198,10 +219,13 @@ export default function Evaluation() {
             </div> 
             <button
                 className="mt-6 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                
+                disabled={loading}
                 onClick={() => {
                     const values = postValue();
                 }}
-            > Submit
+            > 
+            {loading?"Loading...":"Submit"}
             </button>
         </div>
     );

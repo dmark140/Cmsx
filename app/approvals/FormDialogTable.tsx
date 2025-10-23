@@ -57,9 +57,9 @@ export default function FormDialogTable({ DocEntry, dataNumber, projectDataId }:
 
     return (
         <div className="w-full">
-            <table className="w-full border border-gray-200 text-xs border-collapse">
+            <table className="w-full  text-xs border-collapse">
                 <thead>
-                    <tr className="bg-gray-100">
+                    <tr className="">
                         {cols.map((item, i) => (
                             <th key={i} className="p-1 font-semibold text-center">
                                 {item?.label}
