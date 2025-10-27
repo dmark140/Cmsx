@@ -22,7 +22,7 @@ const chartOfAccountsInitial: Account[] = [
 ];
 
 export default function Layout() {
-  const { ID } = useGlobalContext()
+  const { ID ,UserLevel} = useGlobalContext()
   const [selectedType, setSelectedType] = useState<string>("Assets");
   const [chartOfAccounts, setChartOfAccounts] = useState<Account[]>(chartOfAccountsInitial);
   const [newName, setNewName] = useState<string>("");

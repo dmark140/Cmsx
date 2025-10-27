@@ -17,22 +17,13 @@ export default function Layout() {
             name: "Manage Forms",
         },
     ]
-    const reports = [
-        {
-            link: "",
-            name: "Project Reports",
-        },
-    ]
+   
 
 
     const managements = [
         {
             link: "project/listmng",
             name: "Selection List",
-        },
-        {
-            link: "",
-            name: "File Path",
         },
     ]
 
@@ -60,12 +51,12 @@ export default function Layout() {
                 ))}
 
 
-                <p className='font-bold text-lg'>Reports</p>
+                {/* <p className='font-bold text-lg'>Reports</p>
                 {reports.map((item, index) => (
                     <Button key={index} className='w-fit' variant={"ghost"} onClick={() => push(item.link)}>
                         {item.name}
                     </Button>
-                ))}
+                ))} */}
             </div>
 
         </div>

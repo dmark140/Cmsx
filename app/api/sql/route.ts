@@ -13,6 +13,166 @@ const queryMap: Record<
   }
 > = {
 
+
+  getCountPerService: {
+    sql: `
+          SELECT  
+          count(A.DocEntry) Total
+          ,A.Title
+
+          FROM projects A
+          LEFT JOIN projects_data_a_header B on B.ProjectID = A.DocEntry
+          where A.void = 1 and A.DocEntry NOT in (1,24)
+      group by A.Title
+      AND DATE(B.createdDate) >= ?
+      AND DATE(B.createdDate) <= ?
+  `,
+    count: 2,
+  },
+
+
+  getTree: {
+    sql: `
+         SELECT  
+    A.DocEntry,  
+    B.Title,  
+    B.Disc,  
+    C.FinalApprovalStatus,  
+    E.bookingDate,  
+    F.DocEntry AS EvaluationId,  
+    G.acquired_fund,  
+    G.confirm_recieveBy,
+        A.CreatedBy , 
+    X.FirstName,
+    X.LastName,
+    X.MiddleName,
+    CASE
+        WHEN C.FinalApprovalStatus IS NULL THEN 'No approval status'
+        WHEN C.FinalApprovalStatus != 'Approved' THEN C.FinalApprovalStatus
+        WHEN E.bookingDate IS NULL THEN 'For booking'
+        WHEN F.DocEntry IS NULL THEN 'For evaluation'
+        WHEN (G.acquired_fund IS NULL OR G.acquired_fund = 0) THEN 'Fund requested to Treasury'
+        WHEN (G.confirm_recieveBy IS NULL OR G.confirm_recieveBy = 0) THEN 'Fund for entry'
+        ELSE 'Completed'
+    END AS Status
+FROM projects_data_a_header A
+LEFT JOIN projects B 
+    ON A.ProjectID = B.DocEntry
+LEFT JOIN vwdmf_approval_status C 
+    ON C.project_id = A.ProjectID 
+    AND C.DocEntry = A.DocEntry
+LEFT JOIN bookings E 
+    ON E.projects_data_a_header_entry = A.DocEntry 
+    AND E.void = 1
+LEFT JOIN evaluation F 
+    ON F.bookingid = E.DocEntry 
+    AND F.void = 1 
+LEFT JOIN fund_entry G 
+    ON G.project_header_id = A.DocEntry 
+    AND G.void = 1
+left join ousr X on X.DocEntry = A.CreatedBy
+where B.DocEntry not in (1,24)  
+      AND DATE(A.createdDate) >= ?
+      AND DATE(A.createdDate) <= ?
+ORDER BY A.DocEntry ASC
+  `,
+    count: 2,
+  },
+
+  
+
+  getTreePerID: {
+    sql: `
+         SELECT  
+    A.DocEntry,  
+    B.Title,  
+    B.Disc,  
+    C.FinalApprovalStatus,  
+    E.bookingDate,  
+    F.DocEntry AS EvaluationId,  
+    G.acquired_fund,  
+    G.confirm_recieveBy,
+        A.CreatedBy , 
+    X.FirstName,
+    X.LastName,
+    X.MiddleName,
+    CASE
+        WHEN C.FinalApprovalStatus IS NULL THEN 'No approval status'
+        WHEN C.FinalApprovalStatus != 'Approved' THEN C.FinalApprovalStatus
+        WHEN E.bookingDate IS NULL THEN 'For booking'
+        WHEN F.DocEntry IS NULL THEN 'For evaluation'
+        WHEN (G.acquired_fund IS NULL OR G.acquired_fund = 0) THEN 'Fund requested to Treasury'
+        WHEN (G.confirm_recieveBy IS NULL OR G.confirm_recieveBy = 0) THEN 'Fund for entry'
+        ELSE 'Completed'
+    END AS Status
+FROM projects_data_a_header A
+LEFT JOIN projects B 
+    ON A.ProjectID = B.DocEntry
+LEFT JOIN vwdmf_approval_status C 
+    ON C.project_id = A.ProjectID 
+    AND C.DocEntry = A.DocEntry
+LEFT JOIN bookings E 
+    ON E.projects_data_a_header_entry = A.DocEntry 
+    AND E.void = 1
+LEFT JOIN evaluation F 
+    ON F.bookingid = E.DocEntry 
+    AND F.void = 1 
+LEFT JOIN fund_entry G 
+    ON G.project_header_id = A.DocEntry 
+    AND G.void = 1
+left join ousr X on X.DocEntry = A.CreatedBy
+where B.DocEntry not in (1,24)  
+and A.CreatedBy = ?
+ORDER BY A.DocEntry ASC
+  `,
+    count: 1,
+  },
+
+  
+  getFundSummary: {
+    sql: `
+    SELECT 
+      SUM(CASE WHEN A.confirm_recieveBy > 0 THEN acquired_fund ELSE 0 END) AS receivedFunds,
+      SUM(CASE WHEN A.confirm_recieveBy = 0 THEN acquired_fund ELSE 0 END) AS unreceivedFund,
+      CASE 
+        WHEN ? <> '' THEN getBarangayPerUser(B.CreatedBy)
+        ELSE 'All Barangays'
+      END AS barangay
+    FROM fund_entry A
+    LEFT JOIN projects_data_a_header B 
+      ON A.project_header_id = B.DocEntry
+    WHERE 
+      (? = '' OR getBarangayPerUser(B.CreatedBy) = ?)
+      AND DATE(A.created_date) >= ?
+      AND DATE(A.created_date) <= ?
+    GROUP BY 
+      CASE WHEN ? = '' THEN NULL ELSE getBarangayPerUser(B.CreatedBy) END
+  `,
+    count: 6,
+  },
+
+  getApprovalForDashBoard: {
+    sql: `
+  SELECT
+    SUM(CASE WHEN decision = 0 THEN 1 ELSE 0 END) AS Pending,
+    SUM(decision) AS overAll
+  FROM approvals_decisions A
+  where 
+     DATE(A.CreatedDate) >= ?
+      AND DATE(A.CreatedDate) <= ?
+  ; 
+  `,
+    count: 2,
+  },
+
+
+
+
+
+  updateFund: {
+    sql: `UPDATE fund_entry SET confirm_recieveBy = ? , recievedDate = CURRENT_TIMESTAMP WHERE DocEntry = ?`,
+    count: 2,
+  },
   getFundEntryPerID: {
     sql: ` SELECT * FROM fund_entry where DocEntry = ?`,
     count: 1,
@@ -65,6 +225,16 @@ const queryMap: Record<
   },
 
 
+
+
+  checkPasswordWithID: {
+    sql: "SELECT * FROM `ousr` where DocEntry = ? and pass = ? ",
+    count: 2,
+  },
+
+
+
+
   updateUserlevel: {
     sql: "UPDATE `ousr` SET `type` = ?  WHERE `ousr`.`DocEntry` = ?;",
     count: 2,
@@ -106,7 +276,7 @@ const queryMap: Record<
     sql: `INSERT INTO bookings (projects_data_a_header_entry, Title, bookingDate, CreatedBy) VALUES (?, ?, ?, ?);`,
     count: 4,
   },
-  
+
   updateBookingsVoid0: {
     sql: `
       UPDATE bookings SET void = 0 WHERE DocEntry = ?; `,
@@ -203,6 +373,7 @@ distinct
       ,A.createdDate
       ,C.DocEntry projects_data_a_headerEntry
       ,G.DocEntry FunEntry_ID
+      ,G.confirm_recieveBy
       FROM evaluation A
       LEFT JOIN bookings B on A.bookingid = B.DocEntry
       LEFT JOIN projects_data_a_header C on C.DocEntry = B.projects_data_a_header_entry

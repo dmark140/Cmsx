@@ -18,6 +18,7 @@ import { Separator } from '@/components/ui/separator';
 import FeEntry from './FeEntry';
 import { useGlobalContext } from '@/context/GlobalContext';
 import ViewFeEntry from './ViewFeEntry';
+import Recieve from './Recieve';
 type data = {
   DocEntry: number,
   projects_data_a_headerEntry: number,
@@ -29,7 +30,8 @@ type data = {
   createdDate: string
   requestedDate: string
   Title: string,
-  FunEntry_ID?: number | null,
+  FunEntry_ID: number,
+  confirm_recieveBy: number,
 }
 
 export default function Layout() {
@@ -103,6 +105,7 @@ export default function Layout() {
             <TableHead>Evaluated Date</TableHead>
             <TableHead>Requested Date</TableHead>
             <TableHead>Project</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Option</TableHead>
           </TableRow>
         </TableHeader>
@@ -116,16 +119,22 @@ export default function Layout() {
                 <TableCell>{onlyDate(evl.createdDate)}</TableCell>
                 <TableCell>{evl.Title}</TableCell>
                 <TableCell> {evl.FunEntry_ID != null ? "Allocated" : "Un-Allocated"}</TableCell>
-                <TableCell>
+                <TableCell className='flex gap-2'>
                   {evl.FunEntry_ID == null ?
                     <FeEntry
                       project_id={evl.projects_data_a_headerEntry}
                       evaluation_id={evl.UID}
                       onAdd={handleAddEntry}
                     /> :
-                    <ViewFeEntry
-                      evaluation_id={evl.FunEntry_ID} />
-                  } 
+                    <>
+                      <ViewFeEntry
+                        evaluation_id={evl.FunEntry_ID} />
+
+                      {evl.confirm_recieveBy < 1 &&
+                        <Recieve evaluation_id={evl.FunEntry_ID} />}
+                    </>
+                  }
+
                 </TableCell>
               </TableRow>
             ))

@@ -1,7 +1,8 @@
 import { Bell, GitPullRequestCreateIcon, HandHeartIcon, HomeIcon, MegaphoneIcon, Settings2Icon, Shield, ShieldAlert } from "lucide-react";
 
 export const navItems = [
-    { id: 0, name: "Dashboard", href: "/", icon: HomeIcon },
+    { id: 0, name: "Dashboard", href: "/dsrb/adm", icon: HomeIcon },
+    { id: 10, name: "User Dashboard", href: "/dsrb/usr", icon: HomeIcon },
     { id: 1, name: "Project Manager", href: "/project", icon: HandHeartIcon },
     { id: 2, name: "Requsts", href: "/request", icon: GitPullRequestCreateIcon },
     { id: 3, name: "Assessment", href: "/ana", icon: GitPullRequestCreateIcon },

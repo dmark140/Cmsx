@@ -84,7 +84,7 @@ export default function Layout() {
           {Evaluations.length > 0 ? (
             Evaluations.map((evl, idx) => (
               <TableRow key={idx}>
-                <TableCell>{evl.UID}</TableCell>
+                <TableCell>{evl.DocEntry}</TableCell>
                 <TableCell>{evl.firstname} {evl.MiddleName} {evl.LastName}</TableCell>
                 <TableCell>{onlyDate(evl.requestedDate)}</TableCell>
                 <TableCell>{onlyDate(evl.createdDate)}</TableCell>

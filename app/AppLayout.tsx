@@ -7,7 +7,7 @@ import { getGlobalUserName } from '@/lib/globalUser';
 
 export default function AppLayout() {
     const { ID, setID , userName } = useGlobalContext();
-
+    
     return (
         <div>
             {/* <button onClick={() => setID(0)}>restart</button> */}
