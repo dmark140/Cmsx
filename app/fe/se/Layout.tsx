@@ -19,6 +19,7 @@ import FeEntry from './FeEntry';
 import { useGlobalContext } from '@/context/GlobalContext';
 import ViewFeEntry from './ViewFeEntry';
 import Recieve from './Recieve';
+import { toast } from 'sonner';
 type data = {
   DocEntry: number,
   projects_data_a_headerEntry: number,
@@ -45,6 +46,7 @@ export default function Layout() {
 
   const getEvls = async () => {
     const data = await runQuery("getEvls", [fromDate, toDate])
+    console.log({ data })
     if (data) {
       setEvaluations(data.data)
     }
@@ -53,6 +55,7 @@ export default function Layout() {
 
   const handleAddEntry = async (entry: {
     project_id: number
+    created_by: number
     evaluation_id: number
     evaluation: string
     requested: string
@@ -60,6 +63,9 @@ export default function Layout() {
   }) => {
     console.log("Received entry from modal:", entry)
     await runQuery("insertFE", [ID, entry.project_id, entry.requested, entry.acquired])
+    await runQuery("insertNotif", [ID, entry.created_by, "Fund Allocation", "We are please to inform you that the funds for your request have been successfully allocated to you and it is ready for pick-up, please bring an ID and necessary documents " ])
+
+    toast.success("Entry added successfully ");
     getEvls()
   }
 
@@ -124,6 +130,7 @@ export default function Layout() {
                     <FeEntry
                       project_id={evl.projects_data_a_headerEntry}
                       evaluation_id={evl.UID}
+                      created_by={evl.CreatedBy}
                       onAdd={handleAddEntry}
                     /> :
                     <>

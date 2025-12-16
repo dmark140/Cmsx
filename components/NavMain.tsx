@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { SidebarMenuButton } from './ui/sidebar'
 import { useGlobalContext } from '@/context/GlobalContext'
@@ -61,7 +61,7 @@ export default function NavMain() {
     }
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getDashBoard()
   }, [UserLevel])
 

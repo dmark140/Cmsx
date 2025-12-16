@@ -374,6 +374,7 @@ distinct
       ,C.DocEntry projects_data_a_headerEntry
       ,G.DocEntry FunEntry_ID
       ,G.confirm_recieveBy
+        ,C.CreatedBy
       FROM evaluation A
       LEFT JOIN bookings B on A.bookingid = B.DocEntry
       LEFT JOIN projects_data_a_header C on C.DocEntry = B.projects_data_a_header_entry

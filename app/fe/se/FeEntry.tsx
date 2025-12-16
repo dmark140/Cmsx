@@ -8,8 +8,10 @@ import React, { useState } from 'react'
 type FeEntryProps = {
   project_id: number
   evaluation_id: number
+  created_by: number
   onAdd?: (data: {
     project_id: number
+    created_by: number
     evaluation_id: number
     evaluation: string
     requested: string
@@ -17,7 +19,7 @@ type FeEntryProps = {
   }) => void
 }
 
-export default function FeEntry({ project_id, evaluation_id, onAdd }: FeEntryProps) {
+export default function FeEntry({ project_id, evaluation_id, created_by, onAdd }: FeEntryProps) {
   const [open, setopen] = useState(false)
   const [evaluation, setEvaluation] = useState('')
   const [requested, setRequested] = useState('')
@@ -25,7 +27,7 @@ export default function FeEntry({ project_id, evaluation_id, onAdd }: FeEntryPro
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const data = { project_id, evaluation_id, evaluation, requested, acquired }
+    const data = { project_id, created_by, evaluation_id, evaluation, requested, acquired }
     if (onAdd) onAdd(data) // send data to parent
     setopen(false)
     setEvaluation('')
@@ -53,6 +55,7 @@ export default function FeEntry({ project_id, evaluation_id, onAdd }: FeEntryPro
             <div>
               <Label className='pb-2'>Requested Fund</Label>
               <Input
+                type='number'
                 required
                 value={requested}
                 onChange={(e) => setRequested(e.target.value)}
@@ -61,6 +64,7 @@ export default function FeEntry({ project_id, evaluation_id, onAdd }: FeEntryPro
             <div>
               <Label className='pb-2'>Acquired Fund</Label>
               <Input
+                type='number'
                 required
                 value={acquired}
                 onChange={(e) => setAcquired(e.target.value)}
