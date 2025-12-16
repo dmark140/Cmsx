@@ -41,8 +41,8 @@ export function DropDownBaranggay({ onSelect, defaultValue = "Select Barangay" }
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <DropdownMenu >
+      <DropdownMenuTrigger asChild className="blue px-2 py-1">
         <Button variant="outline">{position}</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">

@@ -39,11 +39,11 @@ export default function Servicesx({ barangay, endDate, startDate }: ModuleParame
     const chartConfig = {
         Total: {
             label: "Total",
-            color: "var(--chart-2)",
+            color: "#000081",
         },
         mobile: {
             label: "Mobile",
-            color: "var(--chart-2)",
+            color: "#000081",
         },
         label: {
             color: "var(--background)",

@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label"
 import { useGlobalContext } from "@/context/GlobalContext"
 import { toast } from "sonner"
 import lola from "./lola.png";
+import loginlogo from "./tosvg.png";
 import Image from "next/image"
 import { getGlobalUserName, setGlobalUserName } from "@/lib/globalUser"
 export default function LoginPage() {
@@ -104,10 +105,15 @@ export default function LoginPage() {
 
           <div className="flex flex-1 items-center justify-center">
             <div className={cn("w-full max-w-xs")}>
-              <Card>
+              <Card className="bg-[#010180] text-white">
+                <Image
+                  src={loginlogo}
+                  alt="Image"
+                  className=" w-[100px] mx-auto"
+                />
                 <CardHeader>
                   <CardTitle>Login to your account</CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-white">
                     Enter your email below to login to your account
                   </CardDescription>
                 </CardHeader>
@@ -182,6 +188,7 @@ export default function LoginPage() {
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.5] dark:grayscale"
         />
+
       </div>
     </div>
   )

@@ -20,6 +20,7 @@ import {
   IconUsers,
 } from "@tabler/icons-react"
 
+import loginlogo from "./tosvg.png";
 // import { NavDocuments } from "@/components/nav-documents"
 // import { NavMain } from "@/components/nav-main"
 // import { NavSecondary } from "@/components/nav-secondary"
@@ -36,6 +37,7 @@ import {
 import NavMain from "./NavMain"
 import { NavUser } from "./NavUser"
 import { useGlobalContext } from "@/context/GlobalContext"
+import Image from "next/image";
 
 const data = {
   user: {
@@ -161,6 +163,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
+        <Image
+          src={loginlogo}
+          alt="Image"
+          className=" w-[100px] mx-auto"
+        />
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton

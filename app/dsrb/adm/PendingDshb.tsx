@@ -60,7 +60,7 @@ export default function PendingDshb({ barangay, endDate, startDate }: ModulePara
     }
 
     return (
-        <div>
+        <div className='shadow'>
             <div className="flex gap-4 border border-primary p-3 rounded-md">
                 <div className="p-3">
                     <p className="font-bold text-lg text-primary">Total OverAll Request</p>

@@ -45,7 +45,7 @@
 
 :root {
   --radius: 0.65rem;
-  /* --background: oklch(1 0 0); */
+  --background: oklch(1 0 0);
   --background: #F9FAFB;
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -172,7 +172,8 @@ td {
 
 .date-input {
   position: relative;
-  padding-right: 30px; /* space for the icon */
+  padding-right: 30px;
+  /* space for the icon */
 }
 
 /* For Chrome, Edge, Safari */
@@ -200,11 +201,14 @@ td {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  resize: both;      /* lets user resize like a textarea */
-  overflow: auto;    /* adds scrollbars if text overflows */
-  white-space: pre-wrap; /* preserves line breaks */
+  resize: both;
+  /* lets user resize like a textarea */
+  overflow: auto;
+  /* adds scrollbars if text overflows */
+  white-space: pre-wrap;
+  /* preserves line breaks */
 }
- 
+
 
 .print-hidden {
   display: block;
@@ -217,3 +221,7 @@ td {
 }
 
 
+.blue {
+  background: #000081;
+  color:  #fff
+}
